@@ -1,0 +1,157 @@
+﻿@model MCQPaperDTO
+@{
+    ViewData["Title"] = "MakePaper";
+}
+@section Styles{
+    <link href="~/css/form.css" rel="stylesheet" />
+}
+<h1>Make Paper</h1>
+
+<form asp-action="MakePaper" id="MakePaper">
+    <input type="text" class="form-control" asp-for="PaperTitle" placeholder="Enter Paper Title Here!" required />
+    <hr />
+    <button type="button" id="AddQuestion" class="btn btn-info">
+        <i class="fas fa-1x fa-plus"></i>&nbsp;Add Question
+    </button>
+
+
+    <div class="my-5 questionContainer">
+        <!--Question goes here-->
+    </div>
+    <input type="submit" value="submit" class="btn btn-success" />
+</form>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            /**
+             * Template for new Question
+             */
+            var question = `<div class="card my-1 Question" data-queNo="0">
+<div class="card-header">
+<div class="input-group">
+<div class="input-group-prepend">
+<span class="input-group-text addOpt input-group-addon primary" style="cursor:pointer;"><i class="fas fa-1x fa-plus"></i>&nbsp Add Options</span>
+</div>
+<input type="text" class="form-control" placeholder="write Question here!" required>
+<div class="input-group-append">
+<span class="input-group-text removeQue input-group-addon danger" style="cursor:pointer;"><i class="fas fa-1x fa-times"></i></span>
+</div>
+</div>
+<input type="number" min="1" class="form-control mt-1" placeholder="enter marks for this Question"required>
+</div>
+<div class="card-body optionContainer">
+<!--Options goes here-->
+</div>
+</div>`;
+            /**
+             *  Template for new Option of Question
+             */
+            var option = `
+<div class="input-group my-1 Option">
+<div class="input-group-prepend">
+<div class="input-group-text">
+<input type="radio" required>
+</div>
+</div>
+<input type="text" class="form-control" required>
+<div class="input-group-append">
+<span class="input-group-text removeOpt input-group-addon danger" style="cursor:pointer;"><i class="fas fa-1x fa-times"></i></span>
+</div>
+</div>
+`;
+            /**
+             * Our Custom Css classes / ids
+             *
+             * #AddQuestion : on click add new Question
+             * attr(data-queNo) : Question no. of perticular question
+             * .questionContainer : container for Question
+             *      .Question : class associated with each Question
+             *          span.removeQue : on click remove this Question
+             *          .optionContainer : container for Options
+             *              .Option : class associated with each Option
+             *                  span.removeOpt : on click remove this Option
+             *                  span.addOpt : on click add new option
+             */
+            /**
+             * Add new Question when user click on "+ Add Question" button
+             */
+            $("#AddQuestion").click(function () {
+                var newQue = $(question);
+                var queNo = $(".Question").length;
+                newQue.attr("data-queNo", queNo);
+                $(".questionContainer").eq(0).append(newQue);
+            });
+            /**
+             * Remove Question when User click on "x" of Question
+             */
+            $(".questionContainer").on("click", "span.removeQue", function () {
+                var myContainer = $(".questionContainer").eq(0);
+                $(this).parent().closest(".Question").remove();
+                var queNo = 0;
+                myContainer.find(".Question").each(function () {
+                    $(this).attr("data-queNo", queNo);
+                    $(this).find(".Option input[type='radio']").each(function () {
+                        $(this).attr("name", `Questions[${queNo}].TrueAnswer`);
+                    });
+                    queNo++;
+                });
+            });
+            /**
+             * Remove Option when user click on "x" of perticular option
+             * here we are changing placeholder value of other options
+             */
+            $(".questionContainer").on("click", "span.removeOpt", function () {
+                var optContainer = $(this).parent().closest(".optionContainer");
+                $(this).parent().closest(".Option").remove();
+                var i = 1;
+                optContainer.find("input[type='text']").each(function () {
+                    $(this).attr("placeholder", "Option " + i++);
+                });
+                i = 0;
+                optContainer.find("input[type='radio']").each(function () {
+                    $(this).attr("value", i++);
+                });
+            });
+            /**
+             * Add new Option to perticular Question when user click on "+ Add Options"
+             * assign placeholder value = totaloption + 1
+             */
+            $(".questionContainer").on("click", "span.addOpt", function () {
+
+                var myQuestion = $(this).parent().closest(".Question");
+                var queNo = parseInt(myQuestion.attr("data-queNo"));
+                var optContainer = myQuestion.find(".optionContainer");
+                var newOpt = $(option);
+
+                newOpt.find("input[type='text']")
+                    .attr({ placeholder: `Option ${optContainer.children().length + 1}` });
+                newOpt.find("input[type='radio']")
+                    .attr({ value: optContainer.children().length, name: `Questions[${queNo}].TrueAnswer` })
+                optContainer.append(newOpt);
+            });
+            /**
+             * when user submit form assign name to each input field
+             * so that at server side we can map it with DTOs
+             */
+            $("#MakePaper").submit(function () {
+                var i = 0;
+                $(".questionContainer").find(".Question").each(function () {
+                    //Question input Field
+                    $(this).find(".card-header input[type='text']").attr("name", `Questions[${i}].QuestionText`);
+                    var j = 0;
+                    //Option input Field
+                    $(this).find(".optionContainer input[type='text']").each(function () {
+                        $(this).attr("name", `Questions[${i}].Opetions[${j}]`);
+                        j++;
+                    });
+                    //marks input field
+                    $(this).find(".card-header input[type='number']").attr("name", `Questions[${i}].Marks`);
+                    i++;
+                });
+            });
+        });
+    </script>
+}
+

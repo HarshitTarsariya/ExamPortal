@@ -1,0 +1,27 @@
+﻿@model LoginDTO
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container">
+    <h1>Login</h1>
+    <hr />
+    @if (Model.ExternalLogins.Count == 0)
+    {
+        <h2>No External Logins Provided</h2>
+    }
+    else
+    {
+        <form method="post" asp-controller="account" asp-action="ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl">
+            <div>
+                @foreach (var provider in Model.ExternalLogins)
+                {
+                    <button type="submit" class="btn btn-primary" value="@provider.Name"
+                            name="provider">
+                        Login with @provider.DisplayName
+                    </button>
+                }
+            </div>
+        </form>
+    }
+</div>

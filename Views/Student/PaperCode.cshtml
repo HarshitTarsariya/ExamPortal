@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "PaperCode";
+}
+
+<div class="jumbotron my-5 shadow">
+    <div class="text-center justify-content-center">
+        <h1 class="display-3">Paper Code</h1><br/>
+        <div class="row">
+            <div class="col-md-5 offset-md-3">
+                <form asp-action="PaperCode">
+                    <div class="form-group shadow">
+                        <div class="input-group input-group-lg">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-lg">Code</span>
+                            </div>
+                            <input type="text" id="papercode" name="papercode" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-info m-2" value="Verify" required />
+                        </div>
+                    </div>
+                </form>
+                <span class="badge badge-danger">@ViewBag.Data</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+

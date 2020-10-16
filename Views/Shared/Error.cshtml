@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h3>
+    An error occured while processing your request.
+    the support team os notified and we are working on the fix.
+</h3>
+<h5>please contact us on support@wecare.com</h5>
+<hr />
+<div class="alert alert-danger">
+    <h5>Exception Path</h5>
+    <hr />
+    <p>@ViewBag.ExceptionPath</p>
+</div>
+
+<div class="alert alert-danger">
+    <h5>Exception Message</h5>
+    <hr />
+    <p>@ViewBag.Message</p>
+</div>
+<div class="alert alert-danger">
+    <h5>Exception Stack Trace</h5>
+    <hr />
+    <p>@ViewBag.StackTrace</p>
+</div>
+<a asp-action="index" asp-controller="home">click here to navigate to home page</a>
