@@ -15,7 +15,7 @@ namespace ExamPortal.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.9")
+                .HasAnnotation("ProductVersion", "3.1.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -50,7 +50,7 @@ namespace ExamPortal.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("MCQQuestionId")
+                    b.Property<int>("MCQQuestionId")
                         .HasColumnType("int");
 
                     b.Property<string>("OptionText")
@@ -331,6 +331,16 @@ namespace ExamPortal.Migrations
                     b.HasDiscriminator().HasValue("MCQAnswerSheet");
                 });
 
+            modelBuilder.Entity("ExamPortal.Models.DescriptivePaper", b =>
+                {
+                    b.HasBaseType("ExamPortal.Models.Paper");
+
+                    b.Property<string>("Link")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasDiscriminator().HasValue("DescriptivePaper");
+                });
+
             modelBuilder.Entity("ExamPortal.Models.MCQPaper", b =>
                 {
                     b.HasBaseType("ExamPortal.Models.Paper");
@@ -357,9 +367,11 @@ namespace ExamPortal.Migrations
 
             modelBuilder.Entity("ExamPortal.Models.MCQOption", b =>
                 {
-                    b.HasOne("ExamPortal.Models.MCQQuestion", null)
+                    b.HasOne("ExamPortal.Models.MCQQuestion", "MCQQuestion")
                         .WithMany("MCQOptions")
-                        .HasForeignKey("MCQQuestionId");
+                        .HasForeignKey("MCQQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

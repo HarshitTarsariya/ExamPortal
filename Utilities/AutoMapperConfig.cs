@@ -10,7 +10,7 @@ namespace ExamPortal.Utilities
 {
     public class AutoMapperConfig : Profile
     {
-        public AutoMapperConfig()
+        public AutoMapperConfig()           //Does Mapping, Avoid Tedious Task of   DTO<->Entity
         {
             /*PaperDTO <---> Paper auto mapping*/
             /*QuestionDTO <---> Question auto mapping*/
@@ -19,7 +19,8 @@ namespace ExamPortal.Utilities
                 .ForMember(RDest => RDest.Id, LSrc => LSrc.Ignore());
             CreateMap<MCQPaperDTO, MCQPaper>()
                 .ForMember(RDest => RDest.Questions, LSrc => LSrc.Ignore());
-
+            CreateMap<MCQPaper, MCQPaperDTO>()
+                .ForMember(RDest => RDest.Questions, LSrc => LSrc.Ignore());
             CreateMap<QuestionDTO, Question>()
                 .ForMember(RDest => RDest.Id, LSrc => LSrc.Ignore());
             CreateMap<MCQQuestionDTO, MCQQuestion>()
@@ -31,8 +32,12 @@ namespace ExamPortal.Utilities
             CreateMap<string, MCQOption>()
                 .ForMember(RDest => RDest.OptionText, LSrc => LSrc.MapFrom(src => src))
                 .ForMember(RDest => RDest.Id, LSrc => LSrc.Ignore());
-            CreateMap<MCQPaper, MCQPaperDTO>()
-                .ForMember(RDest => RDest.Questions, LSrc => LSrc.Ignore());
+            CreateMap<MCQAnswerSheet, MCQAnswerSheetDTO>()
+                .ForMember(RDest => RDest.MCQPaper, LSrc => LSrc.MapFrom(src => src.MCQPaper))
+                .ForMember(RDest => RDest.TotalMarks, LSrc => LSrc.Ignore());
+			 CreateMap<DescriptivePaperDTO, DescriptivePaper>()
+                .ForMember(RDest => RDest.Id, LSrc => LSrc.Ignore())
+               .ForMember(RDest => RDest.Link, LSrc => LSrc.Ignore());
         }
 
     }

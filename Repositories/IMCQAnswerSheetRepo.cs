@@ -1,5 +1,6 @@
 ﻿using ExamPortal.Models;
 using ExamPortal.Utilities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,11 @@ namespace ExamPortal.Repositories
 
         public IEnumerable<MCQAnswerSheet> GetByStudentEmail(string StudentEmailId)
         {
-            return AppDbContext.MCQAnswerSheets.Where(ans => ans.StudentEmailId.Equals(StudentEmailId));
+            return AppDbContext.MCQAnswerSheets
+                .Include(ans => ans.MCQPaper)
+                .ThenInclude(x => x.Questions)
+                .Where(ans => ans.StudentEmailId.Equals(StudentEmailId))
+                .ToList();
         }
         public void SetMCQAnswerSheet(MCQAnswerSheet answerSheet)
         {

@@ -1,18 +1,18 @@
 ﻿using ExamPortal.Models;
 using ExamPortal.Utilities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace ExamPortal.Repositories
 {
     public interface IMCQPaperRepo
     {
-        public  MCQPaper GetByPaperCode(string paperCode);
+        public MCQPaper GetByPaperCode(string paperCode);
         public IEnumerable<MCQPaper> GetByTeacherEmail(string email);
-        public  Task<MCQPaper> Create(MCQPaper paper);
+        public Task<MCQPaper> Create(MCQPaper paper);
     }
 
     public class MCQPaperRepoImpl : IMCQPaperRepo
@@ -27,7 +27,7 @@ namespace ExamPortal.Repositories
         public async Task<MCQPaper> Create(MCQPaper paper)
         {
             List<MCQOption> temp = new List<MCQOption>();
-            foreach(var que in paper.Questions)
+            foreach (var que in paper.Questions)
             {
                 temp.Add(que.TrueAnswer);
                 que.TrueAnswer = null;
@@ -38,10 +38,8 @@ namespace ExamPortal.Repositories
                 AppDbContext.Add(paper);
                 AppDbContext.SaveChanges();
                 var i = 0;
-                foreach(var que in paper.Questions)
-                {
+                foreach (var que in paper.Questions)
                     que.TrueAnswer = temp[i++];
-                }
                 AppDbContext.MCQPapers.Attach(paper);
                 AppDbContext.SaveChanges();
                 await transaction.CommitAsync();
@@ -76,7 +74,8 @@ namespace ExamPortal.Repositories
 
         public IEnumerable<MCQPaper> GetByTeacherEmail(string email)
         {
-            return AppDbContext.MCQPapers.Where(paper => paper.TeacherEmailId.Equals(email));
+            var ans = AppDbContext.MCQPapers.Where(paper => paper.TeacherEmailId.Equals(email));
+            return ans;
         }
     }
 

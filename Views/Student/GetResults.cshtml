@@ -1,0 +1,43 @@
+﻿@model IEnumerable<ExamPortal.DTOS.MCQAnswerSheetDTO>
+
+@{
+    ViewData["Title"] = "GetResults";
+}
+
+<h1>Answers ...</h1>
+
+<p>
+    <a asp-action="PaperCode">Submit New Answer</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                SubmittedTime
+            </th>
+            <th>
+                PaperCode / PaperTitle
+            </th>
+            <th>
+                Marks / Total Marks
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.SubmittedTime
+                </td>
+                <td>
+                    @item.MCQPaper.PaperCode / @item.MCQPaper.PaperTitle
+                </td>
+                <td>
+                    @item.MarksObtained / @item.TotalMarks
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

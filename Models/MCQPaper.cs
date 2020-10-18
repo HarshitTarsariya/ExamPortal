@@ -11,6 +11,6 @@ namespace ExamPortal.Models
         {
             Questions = new List<MCQQuestion>();
         }
-        public List<MCQQuestion> Questions { get; set; }
+        public ICollection<MCQQuestion> Questions { get; set; }
     }
 }

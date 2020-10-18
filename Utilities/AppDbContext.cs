@@ -18,11 +18,15 @@ namespace ExamPortal.Utilities
         public DbSet<AnswerSheet> AnswerSheets { get; set; }
         public DbSet<MCQAnswerSheet> MCQAnswerSheets { get; set; }
         public DbSet<MCQOption> MCQOptions { get; set; }
-
+        public DbSet<DescriptivePaper> DescriptivePapers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<MCQOption>()
+                .HasOne(x => x.MCQQuestion)
+                .WithMany(x => x.MCQOptions)
+                .HasForeignKey(x => x.MCQQuestionId);
         }
     }
 }

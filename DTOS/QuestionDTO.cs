@@ -9,5 +9,6 @@ namespace ExamPortal.DTOS
     {
         public string QuestionText { get; set; }
         public int Marks { get; set; }
+
     }
 }

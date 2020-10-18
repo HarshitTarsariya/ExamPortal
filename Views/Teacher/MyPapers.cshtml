@@ -1,0 +1,59 @@
+﻿@model IEnumerable<ExamPortal.DTOS.MCQPaperDTO>
+
+@{
+    ViewData["Title"] = "MyPapers";
+}
+
+<h1>MyPapers</h1>
+
+<p>
+    <a asp-action="MakePaper">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                PaperCode
+            </th>
+            <th>
+                TeacherEmailId
+            </th>
+            <th>
+                CreatedDate
+            </th>
+            <th>
+                DeadLine
+            </th>
+            <th>
+                PaperTitle
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.PaperCode
+                </td>
+                <td>
+                    @item.TeacherEmailId
+                </td>
+                <td>
+                    @item.CreatedDate
+                </td>
+                <td>
+                    @item.DeadLine
+                </td>
+                <td>
+                    @item.PaperTitle
+                </td>
+                <td>
+                    <a asp-action="PaperDetails" asp-route-papercode="@item.PaperCode">Details</a> |
+                    <a href="#">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

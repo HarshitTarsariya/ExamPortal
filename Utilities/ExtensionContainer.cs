@@ -21,6 +21,8 @@ namespace ExamPortal.Utilities
             services.AddScoped<IStudentService, StudentServiceImpl>();
             services.AddScoped<IMCQPaperRepo, MCQPaperRepoImpl>();
             services.AddScoped<IMCQAnswerSheetRepo, MCQAnswerSheetRepoImpl>();
+			services.AddScoped<FirebaseUpload, FirebaseUpload>();
+            services.AddScoped<IDescriptivePaperRepo, DescriptivePaperRepoImpl>();
             services.AddAutoMapper(typeof(AutoMapperConfig));
 
             return services;
@@ -44,10 +46,10 @@ namespace ExamPortal.Utilities
         public static MCQQuestion DtoTOEntity(this MCQQuestionDTO questionDTO)
         {
             MCQQuestion question = new MCQQuestion();
+            question.QuestionText = questionDTO.QuestionText;
+            question.Marks = questionDTO.Marks;
             for (var i = 0; i < questionDTO.Opetions.Count(); i++)
             {
-                question.Marks = questionDTO.Marks;
-                question.QuestionText = questionDTO.QuestionText;
                 var opetion = new MCQOption() { OptionText = questionDTO.Opetions[i] };
                 question.MCQOptions.Add(opetion);
                 if (i == questionDTO.TrueAnswer)
@@ -55,6 +57,7 @@ namespace ExamPortal.Utilities
             }
             return question;
         }
+
         public static MCQQuestionDTO EntityToDto(this MCQQuestion question)
         {
             MCQQuestionDTO question1 = new MCQQuestionDTO();
@@ -65,7 +68,7 @@ namespace ExamPortal.Utilities
             {
                 question1.Opetions.Add(opt.OptionText);
                 if (opt.Id == question.TrueAnswer.Id)
-                    question1.TrueAnswer = opt.Id;
+                    question1.TrueAnswer = i;
                 i++;
             }
             return question1;

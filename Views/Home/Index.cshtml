@@ -3,24 +3,24 @@
 }
 
 
-<div class="jumbotron my-5 shadow">
+<div class="jumbotron my-5">
     <div class="text-center">
         <h1 class="display-4">Welcome To Exam Portal</h1>
     </div>
     <nav class="navbar navbar-expand-lg">
         <div class="navbar-nav mx-auto">
             <div class="btn-group m-2">
-                <button type="button" class="btn btn-info dropdown-toggle shadow" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Make Paper
                 </button>
-                <div class="dropdown-menu shadow">
+                <div class="dropdown-menu">
                     <a class="dropdown-item" asp-controller="teacher" asp-action="MakePaper">Make MCQ Paper</a>
-                    <a class="dropdown-item" href="#">Make Discriptive Paper</a>
+                    <a class="dropdown-item" asp-controller="teacher" asp-action="MakeDescriptivePaper">Make Discriptive Paper</a>
                 </div>
             </div>
-            <a class="nav-item btn btn-info m-2 shadow" href="#">My Paper List</a>
-            <a class="nav-item btn btn-info m-2 shadow" href="#">My Answer List</a>
-            <a class="nav-item btn btn-info m-2 shadow" asp-controller="student" asp-action="PaperCode">Write Answer</a>
+            <a class="nav-item btn btn-info m-2" asp-controller="teacher" asp-action="MyPapers">My Paper List</a>
+            <a class="nav-item btn btn-info m-2" asp-controller="student" asp-action="GetResults">My Answer List</a>
+            <a class="nav-item btn btn-info m-2" asp-controller="student" asp-action="PaperCode">Write Answer</a>
         </div>
     </nav>
 </div>
