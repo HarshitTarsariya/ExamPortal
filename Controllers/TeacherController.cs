@@ -1,6 +1,7 @@
 ﻿using ExamPortal.DTOS;
 using ExamPortal.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace ExamPortal.Controllers
 {
@@ -33,16 +34,18 @@ namespace ExamPortal.Controllers
             //return Json(data);
             return View(data);
         }
-		[HttpGet]
+
+        [HttpGet]
         public IActionResult MakeDescriptivePaper()
         {
             return View();
         }
+
         [HttpPost]
-        public IActionResult  MakeDescriptivePaper(DescriptivePaperDTO DesPaper)
+        public async Task<IActionResult> MakeDescriptivePaper(DescriptivePaperDTO DesPaper)
         {
             DesPaper.TeacherEmailId = User.Identity.Name;
-            TeacherService.CreateDescriptivePaper(DesPaper);
+            await TeacherService.CreateDescriptivePaper(DesPaper);
             return RedirectToAction("index", "home");
         }
     }

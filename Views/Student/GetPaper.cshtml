@@ -96,10 +96,10 @@
 
             }, 1000);
 
-            var FullScreen, time = 20;
+            var FullScreen, time = 40;
             $(window).resize(function () {
                 if (Math.abs(window.outerHeight - window.screen.height) <= 30 && Math.abs(window.outerWidth - window.screen.width) <= 20) {
-                    ;
+
                     clearInterval(FullScreen);
                     $('#CardforHonesty').css('display', 'none');
                     $('#FullScreen').html('');
@@ -134,5 +134,4 @@
         });
     </script>
 }
-          
 

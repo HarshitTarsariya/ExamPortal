@@ -8,5 +8,6 @@ namespace ExamPortal.Models
     public class DescriptivePaper:Paper
     {
         public string Link { get; set; }
+
     }
 }

@@ -10,7 +10,7 @@ namespace ExamPortal.Utilities
 {
     public class AutoMapperConfig : Profile
     {
-        public AutoMapperConfig()           //Does Mapping, Avoid Tedious Task of   DTO<->Entity
+        public AutoMapperConfig()
         {
             /*PaperDTO <---> Paper auto mapping*/
             /*QuestionDTO <---> Question auto mapping*/
@@ -35,9 +35,8 @@ namespace ExamPortal.Utilities
             CreateMap<MCQAnswerSheet, MCQAnswerSheetDTO>()
                 .ForMember(RDest => RDest.MCQPaper, LSrc => LSrc.MapFrom(src => src.MCQPaper))
                 .ForMember(RDest => RDest.TotalMarks, LSrc => LSrc.Ignore());
-			 CreateMap<DescriptivePaperDTO, DescriptivePaper>()
-                .ForMember(RDest => RDest.Id, LSrc => LSrc.Ignore())
-               .ForMember(RDest => RDest.Link, LSrc => LSrc.Ignore());
+            CreateMap<DescriptivePaperDTO, DescriptivePaper>()
+              .ForMember(RDest => RDest.Link, LSrc => LSrc.Ignore());
         }
 
     }

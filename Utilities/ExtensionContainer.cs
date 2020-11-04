@@ -21,10 +21,9 @@ namespace ExamPortal.Utilities
             services.AddScoped<IStudentService, StudentServiceImpl>();
             services.AddScoped<IMCQPaperRepo, MCQPaperRepoImpl>();
             services.AddScoped<IMCQAnswerSheetRepo, MCQAnswerSheetRepoImpl>();
-			services.AddScoped<FirebaseUpload, FirebaseUpload>();
-            services.AddScoped<IDescriptivePaperRepo, DescriptivePaperRepoImpl>();
             services.AddAutoMapper(typeof(AutoMapperConfig));
-
+            services.AddScoped<IFirebaseUpload, FirebaseUpload>();
+            services.AddScoped<IDescriptivePaperRepo, DescriptivePaperRepoImpl>();
             return services;
         }
 
@@ -32,8 +31,8 @@ namespace ExamPortal.Utilities
         {
             services.AddAuthentication().AddGoogle(options =>
             {
-                options.ClientId = "429011546677-b4aqo982bjmj49422n4lk796lrbq1rt9.apps.googleusercontent.com";
-                options.ClientSecret = "CPywROTlE_Hrj-z77ynSdaQS";
+                options.ClientId = "566313563077-ejb0mq4u9bnku8itadmc8jgov17u1e1p.apps.googleusercontent.com";
+                options.ClientSecret = "QKT74XsgR5NC1oLxVjswn4M8";
             });
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {

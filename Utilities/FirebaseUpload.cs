@@ -12,26 +12,25 @@ using System.Threading.Tasks;
 
 namespace ExamPortal.Utilities
 {
-    public class FirebaseUpload
+    public interface IFirebaseUpload
+    {
+        public string Ampersand => "__AMP__";
+        Task<string> Upload(DescriptivePaperDTO DesPaper);
+    }
+    public class FirebaseUpload : IFirebaseUpload
     {
         private string ApiKey = "AIzaSyBvU1BhdtjG5FLwV1KFNDZlh7C_jNHcyDU";
         private string Bucket = "exam-portal-292805.appspot.com";
         private string AuthEmail = "exam@gmail.com";
         private string AuthPassword = "Exam123";
-        public string Uploader(DescriptivePaperDTO DesPaper)
-        {
-            FileStream stream;
-            
-            string path = "";
-            path = Path.Combine(@"C:\Users\Harshit\Desktop\", DesPaper.paper.FileName);
-            stream = new FileStream(path, FileMode.Open);
-            Task<string> task= Task.Run(() => Upload(stream, DesPaper.paper.FileName, DesPaper.PaperCode));
-            task.Wait();
 
-            return task.Result;
-        }
-        public async Task<string> Upload(FileStream stream, string FileName, string papercode)
+        public async Task<string> Upload(DescriptivePaperDTO DesPaper)
         {
+            Stream stream = DesPaper.paper.OpenReadStream();
+            string FileName = DesPaper.paper.FileName;
+            string papercode = DesPaper.PaperCode;
+
+
             var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
             var aa = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
 

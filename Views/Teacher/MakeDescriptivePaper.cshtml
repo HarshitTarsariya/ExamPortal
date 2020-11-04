@@ -4,28 +4,27 @@
 }
 
 
-<div class="jumbotron my-5 shadow">
+<div class="jumbotron my-5">
     <div class="text-center justify-content-center">
-        <h1 class="display-3">Descriptive</h1><br />
+        <h1 class="display-3">Descriptive Paper Upload</h1><br />
         <div class="row">
             <div class="col-md-5 offset-md-3">
                 <form asp-action="MakeDescriptivePaper" method="post" enctype="multipart/form-data">
-                    <div class="form-group shadow">
+                    <div class="form-group">
                         <div class="input-group input-group-lg">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="inputGroup-sizing-lg">Title</span>
                             </div>
-                            <input type="text" asp-for="PaperTitle" required />
-                        </div><br/>
-                        <div class="input-group input-group-lg">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroup-sizing-lg">File</span>
-                            </div>
-                            <input type="file" accept="application/pdf" asp-for="paper" name="paper" required/>
+                            <input type="text" asp-for="PaperTitle" class="form-control" required />
+                        </div><br />
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="fileUpload" accept="application/pdf" asp-for="paper" required />
+                            <label class="custom-file-label" id="fileUploadLbl" for="fileUpload">Upload File</label>
                         </div>
                         <div class="form-group">
                             <input type="submit" class="btn btn-info m-2" value="Upload" required />
                         </div>
+
                     </div>
                 </form>
                 <span class="badge badge-danger">@ViewBag.Data</span>
@@ -33,3 +32,13 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#fileUpload").change(function () {
+                $("#fileUploadLbl").html($(this).val().split("\\").pop());
+            });
+        });
+    </script>
+}
