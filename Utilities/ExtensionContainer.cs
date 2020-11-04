@@ -24,6 +24,7 @@ namespace ExamPortal.Utilities
             services.AddAutoMapper(typeof(AutoMapperConfig));
             services.AddScoped<IFirebaseUpload, FirebaseUpload>();
             services.AddScoped<IDescriptivePaperRepo, DescriptivePaperRepoImpl>();
+            services.AddScoped<IEmailService, EmailService>();
             return services;
         }
 

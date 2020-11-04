@@ -30,13 +30,14 @@ namespace ExamPortal.Services
     public class TeacherServiceImpl : ITeacherService
     {
         public TeacherServiceImpl(IMapper mapper, IMCQPaperRepo paperRepo
-            , IMCQAnswerSheetRepo answerSheetRepo, IFirebaseUpload fire,IDescriptivePaperRepo descriptivePaperRepo)
+            , IMCQAnswerSheetRepo answerSheetRepo, IFirebaseUpload fire, IDescriptivePaperRepo descriptivePaperRepo, IEmailService emailService)
         {
             Mapper = mapper;
             PaperRepo = paperRepo;
             AnswerSheetRepo = answerSheetRepo;
             Fire = fire;
             DescriptivePaperRepo = descriptivePaperRepo;
+            EmailService = emailService;
         }
 
         public IMapper Mapper { get; }
@@ -44,6 +45,7 @@ namespace ExamPortal.Services
         public IMCQAnswerSheetRepo AnswerSheetRepo { get; }
         public IFirebaseUpload Fire { get; }
         public IDescriptivePaperRepo DescriptivePaperRepo { get; }
+        public IEmailService EmailService{get;}
 
         public string CreatePaper(MCQPaperDTO paper)
         {
@@ -53,6 +55,9 @@ namespace ExamPortal.Services
             foreach (var que in paper.Questions)
                 mcqPaper.Questions.Add(que.DtoTOEntity());
             PaperRepo.Create(mcqPaper);
+            string linktosend = "https://localhost:44394/Teacher/PaperDetails?papercode="+code;
+
+            EmailService.SendMailForPaper(code,linktosend, paper.PaperTitle, paper.CreatedDate.ToString(), paper.DeadLine.ToString(), paper.TeacherEmailId);
             return code;
         }
 
@@ -114,7 +119,7 @@ namespace ExamPortal.Services
             DescriptivePaper paper = Mapper.Map<DescriptivePaperDTO, DescriptivePaper>(DesPaper);
             paper.Link = link;
             DescriptivePaperRepo.Create(paper);
-
+            EmailService.SendMailForPaper(code, linkwith, paper.PaperTitle, paper.CreatedDate.ToString(), paper.DeadLine.ToString(), paper.TeacherEmailId);
             return code;
         }
     }

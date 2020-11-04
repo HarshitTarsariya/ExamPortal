@@ -31,8 +31,16 @@ namespace ExamPortal.Controllers
         public IActionResult PaperDetails(string papercode)
         {
             var data = TeacherService.getPaperByCode(papercode);
+            if(data.TeacherEmailId != User.Identity.Name)
+            {
+                return Redirect("/Error/403");
+            }
+            else
+            {
+                return View(data);
+            }
             //return Json(data);
-            return View(data);
+            
         }
 
         [HttpGet]
