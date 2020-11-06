@@ -11,7 +11,7 @@ namespace ExamPortal.Repositories
     public interface IMCQPaperRepo
     {
         public MCQPaper GetByPaperCode(string paperCode);
-        public IEnumerable<MCQPaper> GetByTeacherEmail(string email);
+        public KeyValuePair<IEnumerable<MCQPaper>, int> GetByTeacherEmail(string email,int page);
         public Task<MCQPaper> Create(MCQPaper paper);
     }
 
@@ -72,10 +72,13 @@ namespace ExamPortal.Repositories
             return ans;
         }
 
-        public IEnumerable<MCQPaper> GetByTeacherEmail(string email)
+        public KeyValuePair<IEnumerable<MCQPaper>,int> GetByTeacherEmail(string email,int page)
         {
-            var ans = AppDbContext.MCQPapers.Where(paper => paper.TeacherEmailId.Equals(email));
-            return ans;
+            int maxRows=3;
+            var ans = AppDbContext.MCQPapers.Where(paper => paper.TeacherEmailId.Equals(email)).Skip((page-1)*maxRows).Take(maxRows);
+            double TotalPages = (double)((decimal)AppDbContext.MCQPapers.Count() / Convert.ToDecimal(maxRows));
+            KeyValuePair<IEnumerable<MCQPaper>, int> pair = new KeyValuePair<IEnumerable<MCQPaper>, int>(ans, (int)Math.Ceiling(TotalPages));
+            return pair;
         }
     }
 

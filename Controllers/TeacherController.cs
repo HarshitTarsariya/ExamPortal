@@ -22,15 +22,18 @@ namespace ExamPortal.Controllers
             return RedirectToAction("index", "home");
         }
 
-        public IActionResult MyPapers()
+        public IActionResult MyPapers(int? page)
         {
-            var data = TeacherService.getPapersByEmailId(User.Identity.Name);
+            var pair = TeacherService.getPapersByEmailId(User.Identity.Name,page??1);
+            var data = pair.Key;
+            ViewBag.pagecount = pair.Value;
+            ViewBag.currentpage = page ?? 1;
             return View(data);
         }
 
-        public IActionResult PaperDetails(string papercode)
+        public IActionResult PaperDetails(string id)
         {
-            var data = TeacherService.getPaperByCode(papercode);
+            var data = TeacherService.getPaperByCode(id);
             if(data.TeacherEmailId != User.Identity.Name)
             {
                 return Redirect("/Error/403");

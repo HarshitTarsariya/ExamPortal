@@ -21,7 +21,7 @@ namespace ExamPortal.Services
         /// return paper associated with given code.
         /// </summary>
         public MCQPaperDTO getPaperByCode(string code);
-        public List<MCQPaperDTO> getPapersByEmailId(string emailId);
+        public KeyValuePair<List<MCQPaperDTO>, int> getPapersByEmailId(string emailId,int page);
         public KeyValuePair<int, int> SetMCQAnswerSheet(MCQPaperDTO mcqpaperdto, string Name);
         public MCQAnswerSheet GetMCQAnswerSheetByCodeAndEmail(string paperCode, string Name);
         public Task<string> CreateDescriptivePaper(DescriptivePaperDTO DesPaper);
@@ -55,7 +55,7 @@ namespace ExamPortal.Services
             foreach (var que in paper.Questions)
                 mcqPaper.Questions.Add(que.DtoTOEntity());
             PaperRepo.Create(mcqPaper);
-            string linktosend = "https://localhost:44394/Teacher/PaperDetails?papercode="+code;
+            string linktosend = $"https://localhost:44394/Teacher/PaperDetails/{code}";
 
             EmailService.SendMailForPaper(code,linktosend, paper.PaperTitle, paper.CreatedDate.ToString(), paper.DeadLine.ToString(), paper.TeacherEmailId);
             return code;
@@ -75,10 +75,12 @@ namespace ExamPortal.Services
             return paperdto;
         }
 
-        public List<MCQPaperDTO> getPapersByEmailId(string emailId)
+        public KeyValuePair<List<MCQPaperDTO>, int> getPapersByEmailId(string emailId,int page)
         {
-            var ans = Mapper.Map<IEnumerable<MCQPaper>, List<MCQPaperDTO>>(PaperRepo.GetByTeacherEmail(emailId));
-            return ans;
+            KeyValuePair<IEnumerable<MCQPaper>, int> pair = PaperRepo.GetByTeacherEmail(emailId, page);
+            var ans = Mapper.Map<IEnumerable<MCQPaper>, List<MCQPaperDTO>>(pair.Key);
+            KeyValuePair<List<MCQPaperDTO>, int> pair1 = new KeyValuePair<List<MCQPaperDTO>, int>(ans, pair.Value);
+            return pair1;
         }
 
         public KeyValuePair<int, int> SetMCQAnswerSheet(MCQPaperDTO mcqpaperdto, string Name)

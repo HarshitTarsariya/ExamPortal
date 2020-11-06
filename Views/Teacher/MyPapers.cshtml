@@ -50,10 +50,34 @@
                     @item.PaperTitle
                 </td>
                 <td>
-                    <a asp-action="PaperDetails" asp-route-papercode="@item.PaperCode">Details</a> |
+                    <a asp-action="PaperDetails" asp-route-id="@item.PaperCode">Details</a> |
                     <a href="#">Delete</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<form  asp-controller="Teacher" asp-action="MyPapers" method="post" id="paginationform">
+    <ul class="pagination justify-content-lg-center">
+        @for (int i = 1; i <= ViewBag.pagecount; i++)
+        {
+            @if (ViewBag.currentpage == i)
+             {
+                <li class="page-item active page-link">@i</li> 
+             }
+             else
+             {
+                <li class="page-item"><a class="page-link" style="cursor:pointer;" onclick="PagerClick(@i)">@i</a></li>
+             }
+        }
+    </ul>        
+    
+    <input type="hidden" name="page" id="paginationpage" /> 
+</form>
+
+<script>
+    function PagerClick(pageclick) {
+        $('#paginationpage').val(pageclick);
+        $('#paginationform').submit();
+    }
+</script>
