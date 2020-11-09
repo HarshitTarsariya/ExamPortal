@@ -1,9 +1,8 @@
 ﻿using ExamPortal.Models;
 using ExamPortal.Utilities;
-using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ExamPortal.Repositories
 {
@@ -12,6 +11,7 @@ namespace ExamPortal.Repositories
         public DescriptivePaper GetByPaperCode(string paperCode);
         public IEnumerable<DescriptivePaper> GetByTeacherEmail(string email);
         public DescriptivePaper Create(DescriptivePaper paper);
+        public void Delete(string code);
     }
 
     public class DescriptivePaperRepoImpl : IDescriptivePaperRepo
@@ -36,6 +36,12 @@ namespace ExamPortal.Repositories
         public IEnumerable<DescriptivePaper> GetByTeacherEmail(string email)
         {
             return AppDbContext.DescriptivePapers.Where(paper => paper.TeacherEmailId.Equals(email));
+        }
+
+        public void Delete(string code)
+        {
+            AppDbContext.DescriptivePapers.Remove(AppDbContext.DescriptivePapers.Where(p => p.PaperCode.Equals(code)).FirstOrDefault());
+            AppDbContext.SaveChanges();
         }
     }
 

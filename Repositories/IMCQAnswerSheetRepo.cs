@@ -1,10 +1,8 @@
 ﻿using ExamPortal.Models;
 using ExamPortal.Utilities;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ExamPortal.Repositories
 {
@@ -26,7 +24,7 @@ namespace ExamPortal.Repositories
 
         public MCQAnswerSheet GetByPaperCodeAndStudentEmail(string PaperCode, string StudentEmailId)
         {
-            return AppDbContext.MCQAnswerSheets
+            return AppDbContext.MCQAnswerSheets.Include(ans=>ans.MCQPaper)
                 .Where(ans => ans.MCQPaper.PaperCode.Equals(PaperCode) && ans.StudentEmailId.Equals(StudentEmailId))
                 .FirstOrDefault();
         }

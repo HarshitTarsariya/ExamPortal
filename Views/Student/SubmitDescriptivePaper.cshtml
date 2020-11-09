@@ -1,0 +1,74 @@
+﻿@model DescriptiveAnswerSheetDTO
+@{
+    ViewData["Title"] = "SubmitDescriptivePaper";
+    var pdfURL = $@"{Model.Paper.PaperPdfUrl}#toolbar=0&navpanes=0&scrollbar=0";
+
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <h3>@Model.Paper.PaperTitle<sub><small>Prepared by @Model.Paper.TeacherEmailId</small></sub></h3><br />
+    </div>
+    <div class="col-md-4">
+        <div class="row justify-content-center border rounded-bottom" id="timer">
+        </div>
+    </div>
+</div>
+<div class="col-md-8 mx-auto">
+    <form asp-action="@nameof(StudentController.SubmitDescriptivePaper)" asp-controller="student"  enctype="multipart/form-data" method="post" >
+        <div class="form-group">
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="fileUpload" accept="application/pdf" asp-for="@Model.AnswerSheet" />
+                <label class="custom-file-label" id="fileUploadLbl" for="fileUpload">Upload Your Answersheet</label>
+            </div>
+            <span asp-validation-for="@Model.AnswerSheet" class="text-danger"></span>
+        </div>
+        <input type="hidden" asp-for="@Model.Paper.PaperCode" />
+        <div class="form-group">
+            <button class="btn btn-success" id="submit"><span><i class="fa fa-plane"></i></span> Submit</button>
+        </div>
+    </form>
+</div>
+<div class="container">
+    <object id="pdfFrame" width="100%" height="700px"></object>
+</div>
+<input type="hidden" value="@Model.Paper.DeadLine" id="time" />
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $("#fileUpload").change(function () {
+                $("#fileUploadLbl").html($(this).val().split("\\").pop());
+            });
+
+            var pdfUrl = "@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(pdfURL))";
+            $("#pdfFrame").attr("data", pdfUrl);
+            var interval = setInterval(() => {
+
+                var selectedtime = new Date($("#time").val()).getTime();
+                //console.log("selected: ", selectedtime, "|", $('#time').val());
+                var currenttime = new Date().getTime();
+                //console.log(currenttime);
+                var timeleft = selectedtime - currenttime;
+                var day = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+                if (day < 10) day = "0" + day;
+                var hour = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                if (hour < 10) hour = "0" + hour;
+                var minute = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+                if (minute < 10) minute = "0" + minute;
+                var second = Math.floor((timeleft % (1000 * 60)) / (1000));
+                if (second < 10) second = "0" + second;
+
+
+
+                $('#timer').html("<b>" + day + "d : " + hour + "h : " + minute + "m : " + second + "s </b>")
+                if (timeleft <= 0) {
+                    clearInterval(interval);
+                    $('#timer').html("<b>Time is over, further selection will not be considered<b>");
+                    //$('#submit').css('display', 'none');
+                }
+
+            }, 1000);
+        });
+    </script>
+}

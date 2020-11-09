@@ -23,11 +23,5 @@ namespace ExamPortal.Controllers
             ViewBag.ErrorMsg = "sorry ! requested page not found..";
             return View("NotFound");
         }
-        [Route("/Error/403")]
-        public IActionResult InvalidAccess()
-        {
-            ViewBag.ErrorMsg = "Hey Hold on !! Invalid Access ";
-            return View("NotFound");
-        }
     }
 }

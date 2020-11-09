@@ -1,12 +1,8 @@
-﻿using MimeKit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
-using System.Threading.Tasks;
+﻿using System.Net.Mail;
 
 namespace ExamPortal.Services
 {
+    //Email based Services
     public interface IEmailService
     {
         public void SendMailForPaper(string papercode,string link,string title,string starttime,string endtime,string user);

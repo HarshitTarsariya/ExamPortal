@@ -7,7 +7,7 @@
 <h1>Answers ...</h1>
 
 <p>
-    <a asp-action="PaperCode">Submit New Answer</a>
+    <a asp-action="PaperCode" class="btn btn-primary"> <span><i class="fas fa-plus"></i></span>&nbsp; Submit New Answer</a>
 </p>
 
 <table class="table">
@@ -32,7 +32,7 @@
                     @item.SubmittedTime
                 </td>
                 <td>
-                    @item.MCQPaper.PaperCode / @item.MCQPaper.PaperTitle
+                    @item.Paper.PaperCode / @item.Paper.PaperTitle
                 </td>
                 <td>
                     @item.MarksObtained / @item.TotalMarks

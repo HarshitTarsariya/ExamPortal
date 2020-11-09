@@ -5,9 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ExamPortal</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/site.css" />
-    <link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
+    @*<link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.js" integrity="sha256-2JRzNxMJiS0aHOJjG+liqsEOuBb6++9cY4dSOyiijX4=" crossorigin="anonymous"></script>
     @RenderSection("Styles", required: false)
 </head>
 <body>
@@ -21,11 +23,20 @@
                 </button>
                 <div class="navbar-collapse collapse ">
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span><i class="fas fa-home"></i></span>&nbsp; Home
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" asp-controller="teacher" asp-action="MyPapers"><span><i class="fa fa-clipboard-list"></i></span>&nbsp; My Paper List</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" asp-controller="student" asp-action="GetResults"><span><i class="fas fa-clipboard-list"></i></span>&nbsp; My Answer List</a>
+
+                            </div>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy"><span><i class="fas fa-lock"></i></span>&nbsp; Privacy</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav ml-auto">
@@ -34,7 +45,7 @@
                             <li class="nav-item">
                                 <form method="post" asp-controller="account" asp-action="logout">
                                     <button type="submit" class="nav-link btn btn-link py-0 w-auto">
-                                        Logout @User.Identity.Name
+                                        <span><i class="fas fa-sign-out-alt"></i></span>&nbsp; Logout @User.Identity.Name
                                     </button>
                                 </form>
                             </li>
@@ -42,7 +53,7 @@
                         else
                         {
                             <li class="nav-item">
-                                <a asp-controller="account" class="nav-link text-dark" asp-action="index">Login</a>
+                                <a asp-controller="account" class="nav-link text-dark" asp-action="Login"><span><i class="fas fa-sign-in-alt"></i></span>&nbsp; Login</a>
                             </li>
                         }
                     </ul>
@@ -61,8 +72,11 @@
             &copy; 2020 - ExamPortal - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @*<script src="~/lib/jquery/dist/jquery.min.js"></script>*@
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    @*<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>*@
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>

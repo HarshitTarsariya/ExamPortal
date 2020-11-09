@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ExamPortal.Models
 {
@@ -9,6 +6,7 @@ namespace ExamPortal.Models
     {
         public int Id { get; set; }
         public string OptionText { get; set; }
+        [Required] //<======= Forces Cascade delete
         public int MCQQuestionId { get; set; }
         public MCQQuestion MCQQuestion { get; set; }
     }

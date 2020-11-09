@@ -1,43 +1,98 @@
-﻿@model DescriptivePaperDTO
+﻿
+
+@model DescriptivePaperDTO
 @{
     ViewData["Title"] = "MakeDescriptivePaper";
 }
-
+@section Styles{
+    @{ await Html.RenderPartialAsync("_PartialDateTimeCss");}
+}
 
 <div class="jumbotron my-5">
-    <div class="text-center justify-content-center">
-        <h1 class="display-3">Descriptive Paper Upload</h1><br />
-        <div class="row">
-            <div class="col-md-5 offset-md-3">
-                <form asp-action="MakeDescriptivePaper" method="post" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <div class="input-group input-group-lg">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroup-sizing-lg">Title</span>
-                            </div>
-                            <input type="text" asp-for="PaperTitle" class="form-control" required />
-                        </div><br />
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="fileUpload" accept="application/pdf" asp-for="paper" required />
-                            <label class="custom-file-label" id="fileUploadLbl" for="fileUpload">Upload File</label>
+    <h1 class="display-3 text-center">Descriptive Paper Upload</h1><br />
+    <div class="row">
+        <div class="col-md-7 mx-auto">
+            <form asp-action="@nameof(TeacherController.MakeDescriptivePaper)" id="MakeDescriptivePaper" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <div class="input-group input-group-lg">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-lg">Title</span>
                         </div>
-                        <div class="form-group">
-                            <input type="submit" class="btn btn-info m-2" value="Upload" required />
-                        </div>
-
+                        <input type="text" asp-for="PaperTitle" class="form-control" />
                     </div>
-                </form>
-                <span class="badge badge-danger">@ViewBag.Data</span>
-            </div>
+                    <span asp-validation-for="PaperTitle" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Total Marks</span>
+                        </div>
+                        <input asp-for="TotalMarks" class="form-control" />
+                    </div>
+                    <span asp-validation-for="TotalMarks" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="fileUpload" accept="application/pdf" asp-for="paper" required />
+                        <label class="custom-file-label" id="fileUploadLbl" for="fileUpload">Upload File</label>
+                    </div>
+                    <span asp-validation-for="paper" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label>Expire Date(MM/dd/YYYY)</label>
+                    <div class="input-group date" id="expireDate" data-target-input="nearest">
+                        <input type="text" placeholder="select expire date" asp-for="DeadLine" id="DeadLine" class="form-control datetimepicker-input" data-target="#expireDate" />
+                        <div class="input-group-append" data-target="#expireDate" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                    <span class="text-danger" asp-validation-for="DeadLine"></span>
+
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i>&nbsp; Submit</button>
+
+                </div>
+            </form>
+            <span class="badge badge-danger">@ViewBag.Data</span>
         </div>
     </div>
 </div>
-
+<div class="my-3">
+    <a asp-action="MyPapers">Back To List</a>
+</div>
 @section Scripts{
+    @{ await Html.RenderPartialAsync("_PartialDateTimeJs");}
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
         $(document).ready(function () {
+            $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default, {
+                icons: {
+                    time: 'far fa-clock',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-arrow-up',
+                    down: 'fa fa-arrow-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-calendar-check-o',
+                    clear: 'fa fa-trash',
+                    close: 'fa fa-times'
+                }
+            });
+            $('#expireDate').datetimepicker({
+                minDate: moment().add('days', 1),
+                maxDate: moment().add('days', 30),
+            });
+
             $("#fileUpload").change(function () {
                 $("#fileUploadLbl").html($(this).val().split("\\").pop());
+            });
+            $("#MakeDescriptivePaper").submit(function () {
+                let expdate = $("#DeadLine").val();
+                let expd = moment(expdate, "MM-DD-YYYY hh:mm A");
+                let finaldate = expd.format("DD-MM-YYYY HH:mm");
+                $("#DeadLine").val(finaldate);
             });
         });
     </script>

@@ -2,20 +2,22 @@
 using ExamPortal.Models;
 using Firebase.Auth;
 using Firebase.Storage;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ExamPortal.Utilities
 {
+    //Firebase is used for uploading pdf files
+    //Please remove Apikey,Bucket,AuthEmail,AuthPassword during pushing
     public interface IFirebaseUpload
     {
         public string Ampersand => "__AMP__";
-        Task<string> Upload(DescriptivePaperDTO DesPaper);
+        Task<string> Upload(Stream stream, string name, string papercode);
+        Task Delete(string FileName);
+        Task DeleteEverything(string papercode, List<string> paperssubmitted);
     }
     public class FirebaseUpload : IFirebaseUpload
     {
@@ -24,12 +26,45 @@ namespace ExamPortal.Utilities
         private string AuthEmail = "exam@gmail.com";
         private string AuthPassword = "Exam123";
 
-        public async Task<string> Upload(DescriptivePaperDTO DesPaper)
+        private string FileTypeUploaded = ".pdf";
+        public async Task DeleteEverything(string papercode, List<string> paperssubmitted)
         {
-            Stream stream = DesPaper.paper.OpenReadStream();
-            string FileName = DesPaper.paper.FileName;
-            string papercode = DesPaper.PaperCode;
+            
+            foreach(var response in paperssubmitted)
+            {
+                await Delete(papercode + "_" + response+FileTypeUploaded);
+            }
+            await Delete(papercode+ FileTypeUploaded);
+        }
+        public async Task Delete(string FileName)
+        {
+            var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+            var aa = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
 
+            var cancellation = new CancellationTokenSource();
+            var task = new FirebaseStorage(
+                    Bucket,
+                    new FirebaseStorageOptions
+                    {
+                        AuthTokenAsyncFactory = () => Task.FromResult(aa.FirebaseToken)
+                    }
+                )
+                .Child("Papers")
+                .Child(FileName)
+                .DeleteAsync();
+            await task;
+
+        }
+
+        public async Task<string> Upload(Stream stream, string name, string papercode)
+        {
+            //Stream stream = DesPaper.paper.OpenReadStream();
+            string FileName= papercode;
+            if (name != null)
+            {
+                FileName += "_" + name;
+            }
+            FileName += FileTypeUploaded;
 
             var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
             var aa = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
@@ -42,14 +77,14 @@ namespace ExamPortal.Utilities
                         AuthTokenAsyncFactory = () => Task.FromResult(aa.FirebaseToken)
                     }
                 )
-                .Child(papercode)
+                .Child("Papers") //folder name in the bucket
                 .Child(FileName)
                 .PutAsync(stream, cancellation.Token);
 
             try
             {
                 string link = await task;
-                System.Diagnostics.Debug.WriteLine(link);
+                System.Diagnostics.Debug.Print(link);
                 return link;
             }
             catch (Exception ex)
@@ -58,5 +93,6 @@ namespace ExamPortal.Utilities
                 return "";
             }
         }
+        
     }
 }

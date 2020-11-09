@@ -3,12 +3,34 @@
     ViewData["Title"] = "MakePaper";
 }
 @section Styles{
-    <link href="~/css/form.css" rel="stylesheet" />
+    @{ await Html.RenderPartialAsync("_PartialDateTimeCss");}
 }
+
 <h1>Make Paper</h1>
 
 <form asp-action="MakePaper" id="MakePaper">
-    <input type="text" class="form-control" asp-for="PaperTitle" placeholder="Enter Paper Title Here!" required />
+    <div class="form-row">
+        <div class="col-md-8 my-1">
+            <div class="form-group">
+                <label>Paper Title</label>
+                <input type="text" class="form-control" asp-for="PaperTitle" placeholder="Enter Paper Title Here!" />
+                <span class="text-danger" asp-validation-for="PaperTitle"></span>
+            </div>
+        </div>
+        <div class='col my-1'>
+            <div class="form-group">
+                <label>Expire Date(MM/dd/YYYY)</label>
+                <div class="input-group date" id="expireDate" data-target-input="nearest">
+                    <input type="text" placeholder="select expire date" asp-for="DeadLine" id="DeadLine" class="form-control datetimepicker-input" data-target="#expireDate" />
+                    <div class="input-group-append" data-target="#expireDate" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+                <span class="text-danger" asp-validation-for="DeadLine"></span>
+
+            </div>
+        </div>
+    </div>
     <hr />
     <button type="button" id="AddQuestion" class="btn btn-info">
         <i class="fas fa-1x fa-plus"></i>&nbsp;Add Question
@@ -18,15 +40,35 @@
     <div class="my-5 questionContainer">
         <!--Question goes here-->
     </div>
-    <input type="submit" value="submit" class="btn btn-success" />
+    <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i>&nbsp; Submit</button>
 </form>
 <div class="my-3">
-    <a asp-action="MyPapers">Go TO List</a>
+    <a asp-action="MyPapers">Back To List</a>
 </div>
-
 @section Scripts{
+    @{ await Html.RenderPartialAsync("_PartialDateTimeJs");}
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
         $(document).ready(function () {
+            $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default, {
+                icons: {
+                    time: 'far fa-clock',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-arrow-up',
+                    down: 'fa fa-arrow-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-calendar-check-o',
+                    clear: 'fa fa-trash',
+                    close: 'fa fa-times'
+                }
+            });
+            $('#expireDate').datetimepicker({
+                minDate: moment().add('days', 1),
+                maxDate: moment().add('days', 30),
+            });
+
             /**
              * Template for new Question
              */
@@ -138,6 +180,11 @@
              * so that at server side we can map it with DTOs
              */
             $("#MakePaper").submit(function () {
+                let expdate = $("#DeadLine").val();
+                let expd = moment(expdate, "MM-DD-YYYY hh:mm A");
+                let finaldate = expd.format("DD-MM-YYYY HH:mm");
+                $("#DeadLine").val(finaldate);
+                //alert(`${expdate} | ${expd} | ${finaldate}`);
                 var i = 0;
                 $(".questionContainer").find(".Question").each(function () {
                     //Question input Field

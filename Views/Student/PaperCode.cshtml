@@ -8,7 +8,7 @@
         <h1 class="display-3">Paper Code</h1><br />
         <div class="row">
             <div class="col-md-5 offset-md-3">
-                <form asp-action="PaperCode">
+                <form asp-action="@nameof(StudentController.PaperCode)">
                     <div class="form-group">
                         <div class="input-group input-group-lg">
                             <div class="input-group-prepend">
@@ -26,5 +26,7 @@
         </div>
     </div>
 </div>
-
+<div class="my-2">
+    <a asp-action="@nameof(StudentController.GetResults)">Back To List</a>
+</div>
 

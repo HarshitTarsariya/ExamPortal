@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ExamPortal.DTOS;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using System.Text.Json;
-using ExamPortal.Models;
+﻿using ExamPortal.DTOS;
 using ExamPortal.Services;
+using ExamPortal.Utilities;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ExamPortal.Controllers
 {
     public class StudentController : Controller
     {
+        #region Constructor and Properties
         public IStudentService StudentService { get; }
         public ITeacherService TeacherService { get; }
 
@@ -22,9 +20,11 @@ namespace ExamPortal.Controllers
             StudentService = studentService;
             TeacherService = teacherService;
         }
+        #endregion
+
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction(nameof(GetResults));
         }
         [HttpGet]
         public IActionResult PaperCode()
@@ -34,59 +34,96 @@ namespace ExamPortal.Controllers
         [HttpPost]
         public IActionResult PaperCode(string papercode)
         {
-            MCQPaperDTO paperdto = StudentService.GetMcqPaper(papercode);
-            if (paperdto == null)
-            {
+            ViewBag.User = User.Identity.Name;
 
+            Func<IActionResult> InvalidCode = () =>
+            {
                 ViewBag.Data = "Invalid Paper code";
                 return View();
-            }
-            MCQAnswerSheet paper1 = TeacherService.GetMCQAnswerSheetByCodeAndEmail(papercode, User.Identity.Name);
-            if (paper1 != null)
+            };
+            Func<string, IActionResult> AlreadySubmitted = (teacher) =>
+             {
+                 ViewBag.Data = "You have Already Submitted the Paper Once , if Required Contact Paper Setter - " + teacher;
+                 return View();
+             };
+            var ansSheet = StudentService.GetAnswerSheet(papercode, User.Identity.Name);
+            if (CodeGenerator.GetPaperType(papercode) == EPaperType.MCQ)
             {
-                ViewBag.Data = "You have Already Submitted the Paper Once , if Required Contact Paper Setter - " + paperdto.TeacherEmailId;
-                return View();
+                if (ansSheet != null)
+                    AlreadySubmitted((ansSheet as MCQAnswerSheetDTO).Paper.TeacherEmailId);
+                var paperdto = StudentService.GetMcqPaper(papercode);
+                if (paperdto == null)
+                    return InvalidCode();
+
+                return View("Verify", paperdto);
             }
-            ViewBag.User = User.Identity.Name;
-            return View("Verify", paperdto);
+            else if (CodeGenerator.GetPaperType(papercode) == EPaperType.Descriptive)
+            {
+                if (ansSheet != null)
+                    return AlreadySubmitted((ansSheet as DescriptiveAnswerSheetDTO).Paper.TeacherEmailId);
+                var paperdto = StudentService.GetDescriptiveAnswerSheetForExam(papercode).Paper;
+                if (paperdto == null)
+                    return InvalidCode();
+                return View("Verify", paperdto);
+            }
+            else
+                return InvalidCode();
         }
-        public IActionResult GetPaper(string id)
+        [HttpGet]
+        public IActionResult SubmitMCQPaper(string papercode)
         {
-            MCQPaperDTO paperdto = StudentService.GetMcqPaper(id);
+            var paperdto = StudentService.GetMcqPaper(papercode);
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             return View(paperdto);
         }
-
+        [HttpPost]
+        public IActionResult SubmitMCQPaper(MCQPaperDTO mCQPaperDTO)
+        {
+            if (mCQPaperDTO.DeadLine >= new DateTime())
+            {
+                Func<int, int, string> GetMessage = (total, obtained) =>
+                {
+                    double per = (obtained * 100.0) / (total);
+                    string msg;
+                    if (per > 90.0)
+                        msg = "Excellent Work!!";
+                    else if (per > 80.0)
+                        msg = "Great Going !! Keep it up";
+                    else if (per > 70.0)
+                        msg = "Good Progress , Require extra practise";
+                    else if (per > 50.0)
+                        msg = "Ahh Quite less Marks , Require regular practise , Don't pressurise Practise makes man perfect!!";
+                    else
+                        msg = "Requires Special Meeting with Faculty";
+                    return msg;
+                };
+                KeyValuePair<int, int> marks = StudentService.SetMCQAnswerSheet(mCQPaperDTO, User.Identity.Name);
+                ViewBag.MarksObtained = marks.Value;
+                ViewBag.TotalMarks = marks.Key;
+                ViewBag.Message = GetMessage(marks.Key, marks.Value);
+                ViewBag.User = User.Identity.Name;
+                return View("MCQPaperResult");
+            }
+            return View("SubmitMCQPaper", mCQPaperDTO);
+        }
+        [HttpGet]
+        public IActionResult SubmitDescriptivePaper(string papercode)
+        {
+            Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            return View(StudentService.GetDescriptiveAnswerSheetForExam(papercode));
+        }
+        [HttpPost]
+        public async Task<IActionResult> SubmitDescriptivePaper(DescriptiveAnswerSheetDTO answerSheet1)
+        {
+            await StudentService.SetDescriptiveAnswerSheet(answerSheet1, User.Identity.Name);
+            return RedirectToAction(nameof(HomeController.Index));
+        }
+        [HttpGet]
         public IActionResult GetResults()
         {
-            return View(StudentService.GetAnswerSheets(User.Identity.Name));
+            return View(StudentService.GetMCQAnswerSheets(User.Identity.Name));
         }
 
-        [HttpPost]
-        public IActionResult SubmitPaper(MCQPaperDTO mCQPaperDTO)
-        {
-            Func<int, int, string> GetMessage = (total, obtained) =>
-            {
-                double per = (obtained * 100.0) / (total);
-                string msg;
-                if (per > 90.0)
-                    msg = "Excellent Work!!";
-                else if (per > 80.0)
-                    msg = "Great Going !! Keep it up";
-                else if (per > 70.0)
-                    msg = "Good Progress , Require extra practise";
-                else if (per > 50.0)
-                    msg = "Ahh Quite less Marks , Require regular practise , Don't pressurise Practise makes man perfect!!";
-                else
-                    msg = "Requires Special Meeting with Faculty";
-                return msg;
-            };
-            KeyValuePair<int, int> marks = TeacherService.SetMCQAnswerSheet(mCQPaperDTO, User.Identity.Name);
-            ViewBag.MarksObtained = marks.Value;
-            ViewBag.TotalMarks = marks.Key;
-            ViewBag.Message = GetMessage(marks.Key, marks.Value);
-            ViewBag.User = User.Identity.Name;
-            return View();
-        }
+
     }
 }

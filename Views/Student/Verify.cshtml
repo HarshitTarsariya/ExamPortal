@@ -1,50 +1,53 @@
 ﻿@model PaperDTO
+@inject ITeacherService TeacherService
 @{
     ViewData["Title"] = "Details";
+    var action = nameof(StudentController.SubmitMCQPaper);
+    if (CodeGenerator.GetPaperType(Model.PaperCode) == EPaperType.Descriptive)
+        action = nameof(StudentController.SubmitDescriptivePaper);
 }
 
 <div class="jumbotron my-5">
     <div class="text-center justify-content-center">
-        <h1 class="display-3">Details</h1><br />
+        <h1 class="display-3">Details</h1>
+        <hr />
         <div class="row">
             <div class="col-md-5 offset-md-3">
-                <form asp-action="GetPaper" asp-controller="Student" asp-route-id="@Model.PaperCode">
-                    <div class="form-group shadow">
-                        <div class="input-group input-group-lg">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroup-sizing-lg" style="width: 130px;">Title</span>
-                            </div>
-                            <input type="text" class="form-control disabled" value="@Model.PaperTitle" aria-label="Large" aria-describedby="inputGroup-sizing-sm" required>
+                <div class="form-group shadow">
+                    <div class="input-group input-group-lg">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-lg" style="width: 130px;">Title</span>
                         </div>
-                        <div class="input-group input-group-lg">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroup-sizing-lg" style="width: 130px;">Setter</span>
-                            </div>
-                            <input type="text" class="form-control disabled" value="@Model.TeacherEmailId" aria-label="Large" aria-describedby="inputGroup-sizing-sm" required>
-                        </div>
-                        <div class="input-group input-group-lg">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroup-sizing-lg" style="width: 130px;">You</span>
-                            </div>
-                            <input type="text" class="form-control disabled" value="@ViewBag.User" aria-label="Large" aria-describedby="inputGroup-sizing-sm" required>
-                        </div>
-                        <div class="input-group input-group-lg">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroup-sizing-lg" style="width: 130px;">Code</span>
-                            </div>
-                            <input type="text" class="form-control disabled" value="@Model.PaperCode" aria-label="Large" aria-describedby="inputGroup-sizing-sm" required>
-                        </div>
-                        <div class="input-group input-group-lg">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroup-sizing-lg" style="width: 130px;">Deadline</span>
-                            </div>
-                            <input type="text" class="form-control disabled" value="@Model.DeadLine" aria-label="Large" aria-describedby="inputGroup-sizing-sm" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" class="btn btn-info m-2" value="Start" required />
-                        </div>
+                        <input type="text" class="form-control disabled" value="@Model.PaperTitle" aria-label="Large" aria-describedby="inputGroup-sizing-sm" required>
                     </div>
-                </form>
+                    <div class="input-group input-group-lg">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-lg" style="width: 130px;">Setter</span>
+                        </div>
+                        <input type="text" class="form-control disabled" value="@Model.TeacherEmailId" aria-label="Large" aria-describedby="inputGroup-sizing-sm" required>
+                    </div>
+                    <div class="input-group input-group-lg">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-lg" style="width: 130px;">You</span>
+                        </div>
+                        <input type="text" class="form-control disabled" value="@ViewBag.User" aria-label="Large" aria-describedby="inputGroup-sizing-sm" required>
+                    </div>
+                    <div class="input-group input-group-lg">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-lg" style="width: 130px;">Code</span>
+                        </div>
+                        <input type="text" class="form-control disabled" value="@Model.PaperCode" aria-label="Large" aria-describedby="inputGroup-sizing-sm" required>
+                    </div>
+                    <div class="input-group input-group-lg">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-lg" style="width: 130px;">Deadline</span>
+                        </div>
+                        <input type="text" class="form-control disabled" value="@Model.DeadLine" aria-label="Large" aria-describedby="inputGroup-sizing-sm" required>
+                    </div>
+                    <div class="form-group">
+                        <a class="btn btn-info m-2" asp-route-papercode="@Model.PaperCode" asp-controller="Student" asp-action="@action">Start</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

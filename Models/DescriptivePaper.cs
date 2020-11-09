@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExamPortal.Models
 {
-    public class DescriptivePaper:Paper
+    [Table("DescriptivePaper")]
+    public class DescriptivePaper : Paper
     {
         public string Link { get; set; }
-
+        public int TotalMarks { get; set; }
     }
 }

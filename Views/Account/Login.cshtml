@@ -16,8 +16,9 @@
             <div>
                 @foreach (var provider in Model.ExternalLogins)
                 {
-                    <button type="submit" class="btn btn-primary" value="@provider.Name"
+                    <button type="submit" class="btn btn-danger btn-lg" value="@provider.Name"
                             name="provider">
+                        <span><i class="fab fa-google"></i></span>&nbsp;
                         Login with @provider.DisplayName
                     </button>
                 }

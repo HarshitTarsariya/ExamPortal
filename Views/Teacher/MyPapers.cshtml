@@ -1,22 +1,34 @@
-﻿@model IEnumerable<ExamPortal.DTOS.MCQPaperDTO>
+﻿@model IEnumerable<ExamPortal.DTOS.PaperDTO>
 
 @{
     ViewData["Title"] = "MyPapers";
 }
-
+@section Styles{
+    <style>
+        .show {
+            transition: opacity 50ms;
+        }
+    </style>
+}
 <h1>MyPapers</h1>
+<form asp-action="DeletePaper" id="DeletePaper" style="display:none">
+    <input type="hidden" name="paperCode" id="paperCode" />
+</form>
+<div class="dropdown  my-3">
+    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span><i class="fas fa-plus"></i></span>&nbsp; Create New
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" asp-action="MakePaper">Create MCQ Paper</a>
+        <a class="dropdown-item" asp-action="MakeDescriptivePaper">Create Descriptive Paper</a>
+    </div>
+</div>
 
-<p>
-    <a asp-action="MakePaper">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
                 PaperCode
-            </th>
-            <th>
-                TeacherEmailId
             </th>
             <th>
                 CreatedDate
@@ -31,15 +43,14 @@
         </tr>
     </thead>
     <tbody>
+        @{var idx = 0;}
         @foreach (var item in Model)
         {
             <tr>
                 <td>
                     @item.PaperCode
                 </td>
-                <td>
-                    @item.TeacherEmailId
-                </td>
+
                 <td>
                     @item.CreatedDate
                 </td>
@@ -50,34 +61,62 @@
                     @item.PaperTitle
                 </td>
                 <td>
-                    <a asp-action="PaperDetails" asp-route-id="@item.PaperCode">Details</a> |
-                    <a href="#">Delete</a>
+                    <a asp-action="PaperDetails" class="badge badge-info" asp-route-papercode="@item.PaperCode">Details</a>
+                    | <a href="#" data-toggle="modal" data-dest="#deletetxt_@idx" class="badge badge-danger deleteLink" data-target="#Confirm_@idx" data-backdrop="static" data-keyboard="false">Delete</a>
+                    <div class="modal fade" id="Confirm_@idx" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header alert alert-danger">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">Delete @item.PaperTitle</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        do you want to delete this paper ? after deleted it won't be retrived and all answers associated with it will be gone
+                                    </p>
+                                    <hr />
+                                    <div class="form-group">
+                                        <label>Papercode : </label>
+                                        <input type="text" class="form-control removeTxt" id="deletetxt_@idx" data-dest="#deletebtn_@idx" placeholder="plese enter paper code here to delete it" />
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-danger removeBtn" id="deletebtn_@idx" value="@item.PaperCode">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>
+            idx++;
         }
     </tbody>
 </table>
-<form  asp-controller="Teacher" asp-action="MyPapers" method="post" id="paginationform">
-    <ul class="pagination justify-content-lg-center">
-        @for (int i = 1; i <= ViewBag.pagecount; i++)
-        {
-            @if (ViewBag.currentpage == i)
-             {
-                <li class="page-item active page-link">@i</li> 
-             }
-             else
-             {
-                <li class="page-item"><a class="page-link" style="cursor:pointer;" onclick="PagerClick(@i)">@i</a></li>
-             }
-        }
-    </ul>        
-    
-    <input type="hidden" name="page" id="paginationpage" /> 
-</form>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $(".deleteLink").click(function () {
+                let txtbox = $($(this).data("dest"));
+                txtbox.val("");
+                $(txtbox.data("dest")).prop("disabled", true);
+            });
+            $(".removeTxt").keyup(function () {
+                let btn = $($(this).data("dest"));
+                if ($(this).val() == btn.val())
+                    btn.prop("disabled", false);
+                else
+                    btn.prop("disabled", true);
+            });
+            $(".removeBtn").click(function () {
+                let code = $(this).val();
+                $("#paperCode").val(code);
+                $("#DeletePaper").submit();
+            });
+        });
+    </script>
 
-<script>
-    function PagerClick(pageclick) {
-        $('#paginationpage').val(pageclick);
-        $('#paginationform').submit();
-    }
-</script>
+}

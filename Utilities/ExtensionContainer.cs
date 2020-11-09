@@ -1,18 +1,15 @@
-﻿using ExamPortal.DTOS;
+﻿using AutoMapper;
+using ExamPortal.DTOS;
+using ExamPortal.Models;
 using ExamPortal.Repositories;
 using ExamPortal.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using ExamPortal.Models;
 
 namespace ExamPortal.Utilities
 {
+    //seperates the code from startup.cs
     public static class ExtensionContainer
     {
         public static IServiceCollection configureDI(this IServiceCollection services)
@@ -21,6 +18,8 @@ namespace ExamPortal.Utilities
             services.AddScoped<IStudentService, StudentServiceImpl>();
             services.AddScoped<IMCQPaperRepo, MCQPaperRepoImpl>();
             services.AddScoped<IMCQAnswerSheetRepo, MCQAnswerSheetRepoImpl>();
+            services.AddScoped<IDescriptiveAnswerSheetRepo, DescriptiveAnswerSheetRepoImpl>();
+            services.AddScoped<IDescriptivePaperRepo, DescriptivePaperRepoImpl>();
             services.AddAutoMapper(typeof(AutoMapperConfig));
             services.AddScoped<IFirebaseUpload, FirebaseUpload>();
             services.AddScoped<IDescriptivePaperRepo, DescriptivePaperRepoImpl>();
@@ -43,6 +42,7 @@ namespace ExamPortal.Utilities
             }).AddEntityFrameworkStores<AppDbContext>();
         }
 
+        //DTO to Entity for MCQQuestionDto <-> MCQQuestion done manually to configure the options and its answer
         public static MCQQuestion DtoTOEntity(this MCQQuestionDTO questionDTO)
         {
             MCQQuestion question = new MCQQuestion();
@@ -60,9 +60,11 @@ namespace ExamPortal.Utilities
 
         public static MCQQuestionDTO EntityToDto(this MCQQuestion question)
         {
-            MCQQuestionDTO question1 = new MCQQuestionDTO();
-            question1.QuestionText = question.QuestionText;
-            question1.Marks = question.Marks;
+            MCQQuestionDTO question1 = new MCQQuestionDTO
+            {
+                QuestionText = question.QuestionText,
+                Marks = question.Marks
+            };
             var i = 0;
             foreach (var opt in question.MCQOptions)
             {

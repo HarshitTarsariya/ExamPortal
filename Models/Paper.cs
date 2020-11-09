@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExamPortal.Models
 {
+    [Table("Paper")]
     public class Paper
     {
         public int Id { get; set; }

@@ -13,6 +13,10 @@
     <Compile Remove="Migrations\20201016064541_McqOptionsUpdated.Designer.cs" />
     <Compile Remove="Migrations\20201029102001_DescriptivePaperAdded.cs" />
     <Compile Remove="Migrations\20201029102001_DescriptivePaperAdded.Designer.cs" />
+    <Compile Remove="Migrations\20201105172047_cascade_delete.cs" />
+    <Compile Remove="Migrations\20201105172047_cascade_delete.Designer.cs" />
+    <Compile Remove="Migrations\20201106131034_DescriptiveAnswersheetAdded.cs" />
+    <Compile Remove="Migrations\20201106131034_DescriptiveAnswersheetAdded.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,17 +24,14 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
     <PackageReference Include="Firebase.Auth" Version="1.0.0" />
     <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
-    <PackageReference Include="MailKit" Version="2.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.1.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.9">
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.0-rc.2.20475.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0-rc.2.20475.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.0-rc.2.20475.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
-    <PackageReference Include="PagedList.Mvc" Version="4.5.0" />
-    <PackageReference Include="X.PagedList.Mvc.Core" Version="8.0.7" />
   </ItemGroup>
 
 </Project>

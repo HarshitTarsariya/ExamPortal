@@ -11,8 +11,9 @@ namespace ExamPortal.Repositories
     public interface IMCQPaperRepo
     {
         public MCQPaper GetByPaperCode(string paperCode);
-        public KeyValuePair<IEnumerable<MCQPaper>, int> GetByTeacherEmail(string email,int page);
+        public IEnumerable<MCQPaper> GetByTeacherEmail(string email);
         public Task<MCQPaper> Create(MCQPaper paper);
+        public void Delete(string papercode);
     }
 
     public class MCQPaperRepoImpl : IMCQPaperRepo
@@ -51,6 +52,12 @@ namespace ExamPortal.Repositories
             return paper;
         }
 
+        public void Delete(string papercode)
+        {
+            AppDbContext.MCQPapers.Remove(AppDbContext.MCQPapers.Where(p => p.PaperCode.Equals(papercode)).FirstOrDefault());
+            AppDbContext.SaveChanges();
+        }
+
         public MCQPaper GetByPaperCode(string paperCode)
         {
             using var transaction = AppDbContext.Database.BeginTransaction();
@@ -61,6 +68,7 @@ namespace ExamPortal.Repositories
                 .FirstOrDefault(paper => paper.PaperCode.Equals(paperCode));
                 var questions = AppDbContext.MCQQuestions
                     .Include(que => que.MCQOptions)
+                    .Include(que => que.TrueAnswer)
                     .Where(que => que.MCQPaperId == ans.Id);
                 ans.Questions = questions.ToList();
                 transaction.Commit();
@@ -72,13 +80,10 @@ namespace ExamPortal.Repositories
             return ans;
         }
 
-        public KeyValuePair<IEnumerable<MCQPaper>,int> GetByTeacherEmail(string email,int page)
+        public IEnumerable<MCQPaper> GetByTeacherEmail(string email)
         {
-            int maxRows=3;
-            var ans = AppDbContext.MCQPapers.Where(paper => paper.TeacherEmailId.Equals(email)).Skip((page-1)*maxRows).Take(maxRows);
-            double TotalPages = (double)((decimal)AppDbContext.MCQPapers.Count() / Convert.ToDecimal(maxRows));
-            KeyValuePair<IEnumerable<MCQPaper>, int> pair = new KeyValuePair<IEnumerable<MCQPaper>, int>(ans, (int)Math.Ceiling(TotalPages));
-            return pair;
+            var ans = AppDbContext.MCQPapers.Where(paper => paper.TeacherEmailId.Equals(email));
+            return ans;
         }
     }
 

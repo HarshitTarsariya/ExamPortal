@@ -15,20 +15,16 @@ namespace ExamPortal.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.9")
+                .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "5.0.0-rc.2.20475.6");
 
             modelBuilder.Entity("ExamPortal.Models.AnswerSheet", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .UseIdentityColumn();
 
                     b.Property<string>("StudentEmailId")
                         .HasColumnType("nvarchar(max)");
@@ -38,9 +34,7 @@ namespace ExamPortal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AnswerSheets");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("AnswerSheet");
+                    b.ToTable("AnswerSheet");
                 });
 
             modelBuilder.Entity("ExamPortal.Models.MCQOption", b =>
@@ -48,7 +42,7 @@ namespace ExamPortal.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<int>("MCQQuestionId")
                         .HasColumnType("int");
@@ -68,17 +62,13 @@ namespace ExamPortal.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DeadLine")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaperCode")
                         .HasColumnType("nvarchar(max)");
@@ -91,9 +81,7 @@ namespace ExamPortal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Papers");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Paper");
+                    b.ToTable("Paper");
                 });
 
             modelBuilder.Entity("ExamPortal.Models.Question", b =>
@@ -101,7 +89,7 @@ namespace ExamPortal.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -130,18 +118,18 @@ namespace ExamPortal.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("NormalizedName")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasName("RoleNameIndex")
+                        .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
@@ -152,7 +140,7 @@ namespace ExamPortal.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -184,8 +172,8 @@ namespace ExamPortal.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -197,12 +185,12 @@ namespace ExamPortal.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -220,17 +208,17 @@ namespace ExamPortal.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
-                        .HasName("EmailIndex");
+                        .HasDatabaseName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasName("UserNameIndex")
+                        .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
@@ -241,7 +229,7 @@ namespace ExamPortal.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -316,6 +304,24 @@ namespace ExamPortal.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("ExamPortal.Models.DescriptiveAnswerSheet", b =>
+                {
+                    b.HasBaseType("ExamPortal.Models.AnswerSheet");
+
+                    b.Property<string>("AnswerLink")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DescriptivePaperId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MarksObtained")
+                        .HasColumnType("int");
+
+                    b.HasIndex("DescriptivePaperId");
+
+                    b.ToTable("DescriptiveAnswerSheet");
+                });
+
             modelBuilder.Entity("ExamPortal.Models.MCQAnswerSheet", b =>
                 {
                     b.HasBaseType("ExamPortal.Models.AnswerSheet");
@@ -328,7 +334,7 @@ namespace ExamPortal.Migrations
 
                     b.HasIndex("MCQPaperId");
 
-                    b.HasDiscriminator().HasValue("MCQAnswerSheet");
+                    b.ToTable("MCQAnswerSheet");
                 });
 
             modelBuilder.Entity("ExamPortal.Models.DescriptivePaper", b =>
@@ -338,14 +344,17 @@ namespace ExamPortal.Migrations
                     b.Property<string>("Link")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("DescriptivePaper");
+                    b.Property<int>("TotalMarks")
+                        .HasColumnType("int");
+
+                    b.ToTable("DescriptivePaper");
                 });
 
             modelBuilder.Entity("ExamPortal.Models.MCQPaper", b =>
                 {
                     b.HasBaseType("ExamPortal.Models.Paper");
 
-                    b.HasDiscriminator().HasValue("MCQPaper");
+                    b.ToTable("MCQPaper");
                 });
 
             modelBuilder.Entity("ExamPortal.Models.MCQQuestion", b =>
@@ -372,6 +381,8 @@ namespace ExamPortal.Migrations
                         .HasForeignKey("MCQQuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("MCQQuestion");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -425,12 +436,55 @@ namespace ExamPortal.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ExamPortal.Models.DescriptiveAnswerSheet", b =>
+                {
+                    b.HasOne("ExamPortal.Models.DescriptivePaper", "DescriptivePaper")
+                        .WithMany()
+                        .HasForeignKey("DescriptivePaperId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ExamPortal.Models.AnswerSheet", null)
+                        .WithOne()
+                        .HasForeignKey("ExamPortal.Models.DescriptiveAnswerSheet", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("DescriptivePaper");
+                });
+
             modelBuilder.Entity("ExamPortal.Models.MCQAnswerSheet", b =>
                 {
+                    b.HasOne("ExamPortal.Models.AnswerSheet", null)
+                        .WithOne()
+                        .HasForeignKey("ExamPortal.Models.MCQAnswerSheet", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
                     b.HasOne("ExamPortal.Models.MCQPaper", "MCQPaper")
                         .WithMany()
                         .HasForeignKey("MCQPaperId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MCQPaper");
+                });
+
+            modelBuilder.Entity("ExamPortal.Models.DescriptivePaper", b =>
+                {
+                    b.HasOne("ExamPortal.Models.Paper", null)
+                        .WithOne()
+                        .HasForeignKey("ExamPortal.Models.DescriptivePaper", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ExamPortal.Models.MCQPaper", b =>
+                {
+                    b.HasOne("ExamPortal.Models.Paper", null)
+                        .WithOne()
+                        .HasForeignKey("ExamPortal.Models.MCQPaper", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 
@@ -445,6 +499,20 @@ namespace ExamPortal.Migrations
                         .HasForeignKey("MCQPaperId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("MCQPaper");
+
+                    b.Navigation("TrueAnswer");
+                });
+
+            modelBuilder.Entity("ExamPortal.Models.MCQPaper", b =>
+                {
+                    b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("ExamPortal.Models.MCQQuestion", b =>
+                {
+                    b.Navigation("MCQOptions");
                 });
 #pragma warning restore 612, 618
         }
