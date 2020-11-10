@@ -56,12 +56,7 @@ namespace ExamPortal.Services
                 {
                     ans[i].TotalMarks += que.Marks;
                 }
-
                 i++;
-            }
-            foreach (var marks in ans)
-            {
-                
             }
             return ans;
         }
