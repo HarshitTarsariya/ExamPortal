@@ -31,11 +31,12 @@ namespace ExamPortal.Repositories
 
         public IEnumerable<MCQAnswerSheet> GetByStudentEmail(string StudentEmailId)
         {
-            return AppDbContext.MCQAnswerSheets
-                .Include(ans => ans.MCQPaper)
-                .ThenInclude(x => x.Questions)
-                .Where(ans => ans.StudentEmailId.Equals(StudentEmailId))
-                .ToList();
+            var answersheets = AppDbContext.MCQAnswerSheets.Include(ans=>ans.MCQPaper).ToList();
+            foreach (var sheet in answersheets)
+            {
+                sheet.MCQPaper.Questions = AppDbContext.MCQQuestions.Where(que => que.MCQPaperId == sheet.MCQPaperId).ToList();
+            }
+            return answersheets;
         }
         public void SetMCQAnswerSheet(MCQAnswerSheet answerSheet)
         {

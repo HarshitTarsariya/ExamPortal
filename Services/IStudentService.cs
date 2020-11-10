@@ -23,6 +23,7 @@ namespace ExamPortal.Services
     public class StudentServiceImpl : IStudentService
     {
         #region Constructor and Properties
+
         public StudentServiceImpl(IMapper mapper, IMCQPaperRepo paperRepo
             , IMCQAnswerSheetRepo answerSheetRepo, IDescriptiveAnswerSheetRepo descriptiveAnswerSheetRepo
             , IDescriptivePaperRepo descriptivePaperRepo, IFirebaseUpload fire)
@@ -41,6 +42,7 @@ namespace ExamPortal.Services
         public IDescriptiveAnswerSheetRepo DescriptiveAnswerSheetRepo { get; }
         public IDescriptivePaperRepo DescriptivePaperRepo { get; }
         public IFirebaseUpload Fire { get; }
+
         #endregion
         public List<MCQAnswerSheetDTO> GetMCQAnswerSheets(string email)
         {
@@ -51,8 +53,15 @@ namespace ExamPortal.Services
             foreach (var ele in answerSheet)
             {
                 foreach (var que in ele.MCQPaper.Questions)
+                {
                     ans[i].TotalMarks += que.Marks;
+                }
+
                 i++;
+            }
+            foreach (var marks in ans)
+            {
+                
             }
             return ans;
         }
