@@ -124,6 +124,5 @@ namespace ExamPortal.Controllers
             return View(StudentService.GetMCQAnswerSheets(User.Identity.Name));
         }
 
-
     }
 }

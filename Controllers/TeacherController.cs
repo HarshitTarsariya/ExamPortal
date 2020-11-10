@@ -2,6 +2,8 @@
 using ExamPortal.Services;
 using ExamPortal.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ExamPortal.Controllers
@@ -77,6 +79,34 @@ namespace ExamPortal.Controllers
                 var paperdto = TeacherService.getDescriptivePaper(papercode);
                 return View("DescriptivePaperDetails", paperdto);
             }
+        }
+        [HttpGet]
+        public IActionResult Responses(string papercode)
+        {
+            if (CodeGenerator.GetPaperType(papercode) == EPaperType.MCQ)
+            {
+                var answersheet = TeacherService.GetAnswerSheetsBycode(papercode).ToList();
+                answersheet.Add(new MCQAnswerSheetDTO());
+                return View(answersheet);
+            }
+            else
+            {
+                var answersheet = TeacherService.GetDescriptiveAnswerSheetsBycode(papercode).ToList();
+                answersheet.Add(new DescriptiveAnswerSheetDTO());
+                return View("ResponsesOfDescriptive",answersheet);
+            }
+        }
+        [HttpGet]
+        public IActionResult EnterMarks(string obj)
+        {
+            var answersheet = JsonConvert.DeserializeObject<DescriptiveAnswerSheetDTO>(obj);
+            return View(answersheet);
+        }
+        [HttpPost]
+        public IActionResult EnterMarks(string papercode, int marksgiven, string studentname)
+        {
+            TeacherService.SetMarksInDescriptivePaper(papercode, marksgiven, studentname);
+            return RedirectToAction("Responses",new { papercode = papercode });
         }
     }
 }

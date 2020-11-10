@@ -1,0 +1,53 @@
+﻿@model List<DescriptiveAnswerSheetDTO>
+@{
+    ViewData["Title"] = "ResponsesOfDescriptive";
+}
+
+<h3>Responses</h3>
+<br />
+
+@if (Model.Count > 1)
+{
+    <h5>Paper Title : <small>@Model[0].Paper.PaperTitle</small></h5>
+    <h5>Paper Code  : <small>@Model[0].Paper.PaperCode</small></h5>
+    <h5>Start Time  : <small>@Model[0].Paper.CreatedDate</small></h5>
+    <h5>Deadline    : <small>@Model[0].Paper.DeadLine</small></h5>
+    <h5>Total Marks : <small>@Model[0].Paper.TotalMarks</small></h5>
+    <br /><br />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Student Email</th>
+                <th>Marks Obtained</th>
+                <th>Submitted Time</th>
+                <th>Answer Book</th>
+                <th>Enter Marks</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count - 1; i++)
+            {
+                <tr>
+                    <td>@Model[i].StudentEmailId</td>
+                    @if (Model[i].MarksObtained == null)
+                    {
+                        <td class="text text-danger"><b>Pending</b></td>
+                    }
+                    else
+                    {
+                        <td>@Model[i].MarksObtained</td>
+                    }
+                    <td>@Model[i].SubmittedTime</td>
+                    <td><a href="@Model[i].AnswerLink" target="_blank">Answers</a></td>
+                    <td><a asp-action="EnterMarks" asp-route-obj="@JsonConvert.SerializeObject(Model[i])">Check</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h4>No Responses</h4>
+}
+
+

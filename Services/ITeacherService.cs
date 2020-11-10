@@ -28,7 +28,9 @@ namespace ExamPortal.Services
         /// can delete any paper associated with given code
         /// </summary>
         public Task deletePaper(string papercode);
-
+        public IEnumerable<MCQAnswerSheetDTO> GetAnswerSheetsBycode(string papercode);
+        public IEnumerable<DescriptiveAnswerSheetDTO> GetDescriptiveAnswerSheetsBycode(string papercode);
+        public void SetMarksInDescriptivePaper(string papercode, int marksgiven, string studentname);
     }
 
     public class TeacherServiceImpl : ITeacherService
@@ -118,10 +120,40 @@ namespace ExamPortal.Services
                     McqPaperRepo.Delete(papercode);
                     break;
                 case EPaperType.Descriptive:
-                    DescriptivePaperRepo.Delete(papercode);
                     await Fire.DeleteEverything(papercode,DescriptiveAnswerSheetRepo.GetAllResponseByCode(papercode).Select(paper=>paper.StudentEmailId).ToList());
+                    DescriptivePaperRepo.Delete(papercode);
                     break;
             }
+        }
+        public IEnumerable<MCQAnswerSheetDTO> GetAnswerSheetsBycode(string papercode)
+        {
+            var answerSheet=AnswerSheetRepo.GetByPaperCode(papercode);
+            var ans=Mapper.Map<IEnumerable<MCQAnswerSheet>, List<MCQAnswerSheetDTO>>(answerSheet);
+            int i = 0;
+            foreach (var ele in answerSheet)
+            {
+                foreach (var que in ele.MCQPaper.Questions)
+                {
+                    ans[i].TotalMarks += que.Marks;
+                }
+                i++;
+            }
+            return ans;
+        }
+        public IEnumerable<DescriptiveAnswerSheetDTO> GetDescriptiveAnswerSheetsBycode(string papercode)
+        {
+            var answersheets = DescriptiveAnswerSheetRepo.GetAllResponseByCode(papercode).ToList();
+            var ans = Mapper.Map<IEnumerable<DescriptiveAnswerSheet>, List<DescriptiveAnswerSheetDTO>>(answersheets);
+            for(int i = 0; i < ans.Count; i++)
+            {
+                ans[i].Paper = Mapper.Map<DescriptivePaper, DescriptivePaperDTO>(answersheets[i].DescriptivePaper);
+                ans[i].AnswerLink=ans[i].AnswerLink.Replace("__AMP__", "&");
+            }
+            return ans;
+        }
+        public void SetMarksInDescriptivePaper(string papercode, int marksgiven, string studentname)
+        {
+            DescriptiveAnswerSheetRepo.SetMarksInDescriptivePaper(papercode,marksgiven,studentname);
         }
     }
 }

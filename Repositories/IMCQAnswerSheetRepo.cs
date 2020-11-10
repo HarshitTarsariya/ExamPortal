@@ -11,6 +11,7 @@ namespace ExamPortal.Repositories
         public MCQAnswerSheet GetByPaperCodeAndStudentEmail(string PaperCode, string StudentEmailId);
         public IEnumerable<MCQAnswerSheet> GetByStudentEmail(string StudentEmailId);
         public void SetMCQAnswerSheet(MCQAnswerSheet answerSheet);
+        public IEnumerable<MCQAnswerSheet> GetByPaperCode(string papercode);
     }
 
     public class MCQAnswerSheetRepoImpl : IMCQAnswerSheetRepo
@@ -31,7 +32,17 @@ namespace ExamPortal.Repositories
 
         public IEnumerable<MCQAnswerSheet> GetByStudentEmail(string StudentEmailId)
         {
-            var answersheets = AppDbContext.MCQAnswerSheets.Include(ans=>ans.MCQPaper).ToList();
+            var answersheets = AppDbContext.MCQAnswerSheets.Include(ans=>ans.MCQPaper).Where(ans=>ans.StudentEmailId.Equals(StudentEmailId)).ToList();
+            foreach (var sheet in answersheets)
+            {
+                sheet.MCQPaper.Questions = AppDbContext.MCQQuestions.Where(que => que.MCQPaperId == sheet.MCQPaperId).ToList();
+            }
+            return answersheets;
+        }
+        public IEnumerable<MCQAnswerSheet> GetByPaperCode(string papercode)
+        {
+            var Id = AppDbContext.MCQPapers.FirstOrDefault(paper => paper.PaperCode.Equals(papercode)).Id;
+            var answersheets = AppDbContext.MCQAnswerSheets.Include(ans => ans.MCQPaper).Where(ans => ans.MCQPaperId==Id).ToList();
             foreach (var sheet in answersheets)
             {
                 sheet.MCQPaper.Questions = AppDbContext.MCQQuestions.Where(que => que.MCQPaperId == sheet.MCQPaperId).ToList();

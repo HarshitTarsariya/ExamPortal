@@ -1,0 +1,35 @@
+﻿@model DescriptiveAnswerSheetDTO
+@{
+    ViewData["Title"] = "EnterMarks";
+    var pdfURL = $@"{Model.AnswerLink}#toolbar=0&navpanes=0&scrollbar=0";
+}
+
+<h5>Paper Title : <small>@Model.Paper.PaperTitle</small></h5>
+<h5>Paper Code  : <small>@Model.Paper.PaperCode</small></h5>
+<h5>Total Marks : <small>@Model.Paper.TotalMarks</small></h5>
+<br />
+
+<h5>Student Name  : <small>@Model.StudentEmailId</small></h5>
+<h5>Submitted Time : <small>@Model.SubmittedTime</small></h5>
+<br/><br/>
+<form asp-action="EnterMarks" method="post">
+    <input type="number" asp-for="@Model.MarksObtained" name="marksgiven" min="0" max="@Model.Paper.TotalMarks" />
+    <input type="hidden" name="papercode" asp-for="@Model.Paper.PaperCode" />
+    <input type="hidden" name="studentname" asp-for="@Model.StudentEmailId" />
+    <button type="submit" class="btn btn-success">Set Marks</button>
+</form>
+<br /><br />
+<object id="pdfFrame" width="100%" height="700px"></object>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            var pdfUrl = "@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(pdfURL))";
+            $("#pdfFrame").attr("data", pdfUrl);
+        });
+    </script>
+}
+
+
+
+

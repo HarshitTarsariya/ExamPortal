@@ -1,5 +1,6 @@
 ﻿using ExamPortal.Models;
 using ExamPortal.Utilities;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,6 +12,7 @@ namespace ExamPortal.Repositories
         public IEnumerable<DescriptiveAnswerSheet> GetByStudentEmail(string StudentEmailId);
         public void SetDescriptiveAnswerSheet(DescriptiveAnswerSheet descriptiveAnswerSheet);
         public IEnumerable<DescriptiveAnswerSheet> GetAllResponseByCode(string papercode);
+        public void SetMarksInDescriptivePaper(string papercode, int marksgiven, string studentname);
 
     }
     public class DescriptiveAnswerSheetRepoImpl : IDescriptiveAnswerSheetRepo
@@ -40,7 +42,13 @@ namespace ExamPortal.Repositories
         }
         public IEnumerable<DescriptiveAnswerSheet> GetAllResponseByCode(string papercode)
         {
-            return DbContext.DescriptiveAnswerSheets.Where(paper => paper.DescriptivePaper.PaperCode.Equals(papercode));
+            return DbContext.DescriptiveAnswerSheets.Include(sheet=>sheet.DescriptivePaper).Where(paper => paper.DescriptivePaper.PaperCode.Equals(papercode));
+        }
+        public void SetMarksInDescriptivePaper(string papercode, int marksgiven, string studentname)
+        {
+            var answer = DbContext.DescriptiveAnswerSheets.FirstOrDefault(paper => paper.DescriptivePaper.PaperCode.Equals(papercode) && paper.StudentEmailId.Equals(studentname));
+            answer.MarksObtained = marksgiven;
+            DbContext.SaveChanges();
         }
     }
 }

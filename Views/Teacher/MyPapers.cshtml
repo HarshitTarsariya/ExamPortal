@@ -62,7 +62,9 @@
                 </td>
                 <td>
                     <a asp-action="PaperDetails" class="badge badge-info" asp-route-papercode="@item.PaperCode">Details</a>
+                    | <a asp-action="Responses" class="badge badge-primary" asp-route-papercode="@item.PaperCode">Response</a>
                     | <a href="#" data-toggle="modal" data-dest="#deletetxt_@idx" class="badge badge-danger deleteLink" data-target="#Confirm_@idx" data-backdrop="static" data-keyboard="false">Delete</a>
+                     
                     <div class="modal fade" id="Confirm_@idx" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
