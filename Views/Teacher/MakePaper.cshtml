@@ -31,6 +31,14 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="csvfile" accept=".csv" />
+                <label class="custom-file-label" id="fileUploadLbl" title="Eg: Who is John ?,1,0,Mayor,Hero,Musician" for="fileUpload">csv file with format (QuestionText,marks,trueanswer,op1,op2,...) </label>
+            </div>
+        </div>
+    </div>
     <hr />
     <button type="button" id="AddQuestion" class="btn btn-info">
         <i class="fas fa-1x fa-plus"></i>&nbsp;Add Question
@@ -181,9 +189,8 @@
              */
             $("#MakePaper").submit(function () {
                 let expdate = $("#DeadLine").val();
-                let expd = moment(expdate, "MM-DD-YYYY hh:mm A");
-                let finaldate = expd.format("DD-MM-YYYY HH:mm");
-                $("#DeadLine").val(finaldate);
+                let expd = moment(expdate, "dd-MM-yyyy hh:mm A");
+                $("#DeadLine").val(expd["_i"]);
                 //alert(`${expdate} | ${expd} | ${finaldate}`);
                 var i = 0;
                 $(".questionContainer").find(".Question").each(function () {
@@ -199,6 +206,67 @@
                     $(this).find(".card-header input[type='number']").attr("name", `Questions[${i}].Marks`);
                     i++;
                 });
+            });
+
+            $("#csvfile").change(function (event) {
+                $('.questionContainer').html();
+                var file = event.target.files[0];
+                let fr = new FileReader();
+                fr.readAsText(file);
+                fr.onload = function (evnt) {
+                    var data = evnt.target.result;
+                    data = data.split('\n');
+                    console.log(data[0])
+                    for (var i = 0; i < data.length; i++) {
+                        data[i] = data[i].split(',');
+                        console.log(data[i][0]);
+                        var k = 0, option = "";
+                        var queNo = $(".Question").length;
+                        for (var j = 3; j < data[i].length; j++) {
+                            var optionfirst = `
+<div class="input-group my-1 Option">
+<div class="input-group-prepend">
+<div class="input-group-text">`;
+                            if (k == data[i][2])
+                                optionfirst += `<input type="radio" value="${k}" name="Questions[${i}].TrueAnswer" checked required>`;
+                            else
+                                optionfirst += `<input type="radio" value="${k}" name="Questions[${i}].TrueAnswer" required>`;
+                            var optionsecond = `
+
+</div>
+</div>
+<input type="text" class="form-control" value="${data[i][j]}" required>
+<div class="input-group-append">
+<span class="input-group-text removeOpt input-group-addon danger" style="cursor:pointer;"><i class="fas fa-1x fa-times"></i></span>
+</div>
+</div>
+`;
+                            option += optionfirst + optionsecond;
+                            k++;
+                        }
+                        var ques = `<div class="card my-1 Question" data-queNo="${queNo}">
+<div class="card-header">
+<div class="input-group">
+<div class="input-group-prepend">
+<span class="input-group-text addOpt input-group-addon primary" style="cursor:pointer;"><i class="fas fa-1x fa-plus"></i>&nbsp Add Options</span>
+</div>
+<input type="text" class="form-control" value="${data[i][0]}" placeholder="write Question here!" required>
+<div class="input-group-append">
+<span class="input-group-text removeQue input-group-addon danger" style="cursor:pointer;"><i class="fas fa-1x fa-times"></i></span>
+</div>
+</div>
+<input type="number" min="1" class="form-control mt-1" value="${data[i][1]}" placeholder="enter marks for this Question"required>
+</div>
+<div class="card-body optionContainer">${option}
+</div>
+</div>`;
+
+                        $(".questionContainer").eq(0).append(ques);
+                    }
+                };
+            });
+            $("#csvfile").change(function () {
+                $("#fileUploadLbl").html($(this).val().split("\\").pop());
             });
         });
     </script>

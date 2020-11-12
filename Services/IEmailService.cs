@@ -5,9 +5,9 @@ namespace ExamPortal.Services
     //Email based Services
     public interface IEmailService
     {
-        public void SendMailForPaper(string papercode,string link,string title,string starttime,string endtime,string user);
+        public void SendMailForPaper(string papercode, string link, string title, string starttime, string endtime, string user);
     }
-    public class EmailService:IEmailService
+    public class EmailService : IEmailService
     {
         public void SendMailForPaper(string papercode, string link, string title, string starttime, string endtime, string user)
         {

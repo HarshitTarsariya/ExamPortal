@@ -14,6 +14,7 @@ namespace ExamPortal.Repositories
         public IEnumerable<MCQPaper> GetByTeacherEmail(string email);
         public Task<MCQPaper> Create(MCQPaper paper);
         public void Delete(string papercode);
+        public Tuple<int, IEnumerable<Paper>> getAllPapersByEmailId(string emailId, int page);
     }
 
     public class MCQPaperRepoImpl : IMCQPaperRepo
@@ -33,21 +34,23 @@ namespace ExamPortal.Repositories
                 temp.Add(que.TrueAnswer);
                 que.TrueAnswer = null;
             }
-            await using var transaction = await AppDbContext.Database.BeginTransactionAsync();
-            try
+            using (var transaction = await AppDbContext.Database.BeginTransactionAsync())
             {
-                AppDbContext.Add(paper);
-                AppDbContext.SaveChanges();
-                var i = 0;
-                foreach (var que in paper.Questions)
-                    que.TrueAnswer = temp[i++];
-                AppDbContext.MCQPapers.Attach(paper);
-                AppDbContext.SaveChanges();
-                await transaction.CommitAsync();
-            }
-            catch (Exception)
-            {
-                await transaction.RollbackAsync();
+                try
+                {
+                    AppDbContext.Add(paper);
+                    AppDbContext.SaveChanges();
+                    var i = 0;
+                    foreach (var que in paper.Questions)
+                        que.TrueAnswer = temp[i++];
+                    AppDbContext.MCQPapers.Attach(paper);
+                    AppDbContext.SaveChanges();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                }
             }
             return paper;
         }
@@ -60,30 +63,54 @@ namespace ExamPortal.Repositories
 
         public MCQPaper GetByPaperCode(string paperCode)
         {
-            using var transaction = AppDbContext.Database.BeginTransaction();
-            MCQPaper ans = new MCQPaper();
-            try
+            MCQPaper ans = null;
+            using (var transaction = AppDbContext.Database.BeginTransaction())
             {
-                ans = AppDbContext.MCQPapers
-                .FirstOrDefault(paper => paper.PaperCode.Equals(paperCode));
-                var questions = AppDbContext.MCQQuestions
-                    .Include(que => que.MCQOptions)
-                    .Include(que => que.TrueAnswer)
-                    .Where(que => que.MCQPaperId == ans.Id);
-                ans.Questions = questions.ToList();
-                transaction.Commit();
+                try
+                {
+                    ans = AppDbContext.MCQPapers
+                        .FirstOrDefault(paper => paper.PaperCode.Equals(paperCode));
+                    if (ans == null)
+                    {
+                        transaction.Commit();
+                        return null;
+                    }
+                    ans.Questions =
+                        AppDbContext.MCQQuestions
+                        .Include(que => que.TrueAnswer)
+                        .Where(que => que.MCQPaper.PaperCode == paperCode)
+                        .ToList();
+
+                    foreach (var que in ans.Questions)
+                    {
+                        que.TrueAnswer = que.MCQOptions[0];
+                        que.MCQOptions = AppDbContext.MCQOptions
+                                        .Where(opt => opt.MCQQuestionId == que.QuestionId)
+                                        .ToList();
+                    }
+
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                }
             }
-            catch (Exception)
-            {
-                transaction.Rollback();
-            }
-            return ans;
+            return ans ?? new MCQPaper();
         }
 
         public IEnumerable<MCQPaper> GetByTeacherEmail(string email)
         {
             var ans = AppDbContext.MCQPapers.Where(paper => paper.TeacherEmailId.Equals(email));
             return ans;
+        }
+        public Tuple<int, IEnumerable<Paper>> getAllPapersByEmailId(string emailId, int page)
+        {
+            int rows = 5;
+            var paper = AppDbContext.Papers.Where(paper => paper.TeacherEmailId.Equals(emailId)).Skip(rows * (page - 1)).Take(rows);
+            var total = AppDbContext.Papers.Where(paper => paper.TeacherEmailId.Equals(emailId)).Count();
+            double pageCount = (double)((decimal)total / Convert.ToDecimal(rows));
+            return new Tuple<int, IEnumerable<Paper>>((int)Math.Ceiling(pageCount), paper);
         }
     }
 

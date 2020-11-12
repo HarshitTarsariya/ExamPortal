@@ -9,7 +9,7 @@ namespace ExamPortal.DTOS
         {
             Questions = new List<MCQQuestionDTO>();
         }
-
+        public int TotalMarks { get; set; }
         public List<MCQQuestionDTO> Questions { get; set; }
 
     }

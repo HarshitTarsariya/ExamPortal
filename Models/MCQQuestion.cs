@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExamPortal.Models
 {
+    [Table("MCQQuestions")]
     public class MCQQuestion : Question
     {
         public MCQQuestion()
@@ -20,7 +21,7 @@ namespace ExamPortal.Models
         [ForeignKey("MCQOptionId")]
         public MCQOption TrueAnswer { get; set; }
 
-        public ICollection<MCQOption> MCQOptions { get; set; }
+        public List<MCQOption> MCQOptions { get; set; }
     }
 
 }

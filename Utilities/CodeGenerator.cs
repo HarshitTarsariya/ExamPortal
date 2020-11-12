@@ -7,6 +7,7 @@ namespace ExamPortal.Utilities
     //Generates the unique code based on the ticks of time prefixed with type of paper
     public class CodeGenerator
     {
+        static readonly DateTime StartDate = new DateTime(2000, 1, 1);
         //EPaperType is Enum
         private static readonly Dictionary<EPaperType, string> PrefixDict = new Dictionary<EPaperType, string>
         {
@@ -15,29 +16,24 @@ namespace ExamPortal.Utilities
             {EPaperType.Invalid,"" }
         };
 
-        public static string GetSharableCode(EPaperType type) => PrefixDict[type] + GetSharableCode();
+        public static string GetSharableCode(EPaperType type)
+        {
+            Func<DateTime, string> GetSharableCode = (start) =>
+                Convert
+               .ToBase64String(BitConverter.GetBytes((start < DateTime.Now) ? DateTime.Now.Ticks - start.Ticks : DateTime.Now.Ticks))
+               .TrimEnd('=')
+               .Replace('+', 'A')
+               .Replace('/', 'B')
+               .Insert(4, "-")
+               .Insert(9, "-");
+            return PrefixDict[type] + GetSharableCode(StartDate);
+        }
+
         public static EPaperType GetPaperType(string code)
         {
             if (code.StartsWith(PrefixDict[EPaperType.MCQ])) return EPaperType.MCQ;
             if (code.StartsWith(PrefixDict[EPaperType.Descriptive])) return EPaperType.Descriptive;
             return EPaperType.Invalid;
-        }
-        private static string GetSharableCode()
-        {
-            long dt = DateTime.Now.Ticks;
-            string codet = Convert.ToBase64String(BitConverter.GetBytes(dt)).TrimEnd('='), code = "";
-            for (int i = 0; i < codet.Length; i++)
-            {
-                if (codet[i] == '+')
-                    code += 'A';
-                else if (codet[i] == '/')
-                    code += 'B';
-                else
-                    code += codet[i];
-                if (i == 3 || i == 7)
-                    code += '-';
-            }
-            return code;
         }
     }
 }

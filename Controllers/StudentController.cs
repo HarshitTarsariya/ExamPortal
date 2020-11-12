@@ -50,7 +50,7 @@ namespace ExamPortal.Controllers
             if (CodeGenerator.GetPaperType(papercode) == EPaperType.MCQ)
             {
                 if (ansSheet != null)
-                    AlreadySubmitted((ansSheet as MCQAnswerSheetDTO).Paper.TeacherEmailId);
+                    return AlreadySubmitted((ansSheet as MCQAnswerSheetDTO).Paper.TeacherEmailId);
                 var paperdto = StudentService.GetMcqPaper(papercode);
                 if (paperdto == null)
                     return InvalidCode();
@@ -74,12 +74,17 @@ namespace ExamPortal.Controllers
         {
             var paperdto = StudentService.GetMcqPaper(papercode);
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            if(paperdto == null)
+            {
+                ViewBag.Data = "Invalid Code";
+                return View("PaperCode");
+            }
             return View(paperdto);
         }
         [HttpPost]
         public IActionResult SubmitMCQPaper(MCQPaperDTO mCQPaperDTO)
         {
-            if (mCQPaperDTO.DeadLine >= new DateTime())
+            if (Convert.ToDateTime(mCQPaperDTO.DeadLine) >= new DateTime())
             {
                 Func<int, int, string> GetMessage = (total, obtained) =>
                 {
@@ -110,7 +115,13 @@ namespace ExamPortal.Controllers
         public IActionResult SubmitDescriptivePaper(string papercode)
         {
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-            return View(StudentService.GetDescriptiveAnswerSheetForExam(papercode));
+            var paper = StudentService.GetDescriptiveAnswerSheetForExam(papercode);
+            if (paper == null)
+            {
+                ViewBag.Data = "Invalid Code";
+                return View("PaperCode");
+            }
+            return View(paper);
         }
         [HttpPost]
         public async Task<IActionResult> SubmitDescriptivePaper(DescriptiveAnswerSheetDTO answerSheet1)

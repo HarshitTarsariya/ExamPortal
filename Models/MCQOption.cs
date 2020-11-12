@@ -4,7 +4,7 @@ namespace ExamPortal.Models
 {
     public class MCQOption
     {
-        public int Id { get; set; }
+        public int MCQOptionId { get; set; }
         public string OptionText { get; set; }
         [Required] //<======= Forces Cascade delete
         public int MCQQuestionId { get; set; }

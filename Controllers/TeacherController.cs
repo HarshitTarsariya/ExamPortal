@@ -3,7 +3,6 @@ using ExamPortal.Services;
 using ExamPortal.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ExamPortal.Controllers
@@ -15,6 +14,7 @@ namespace ExamPortal.Controllers
 
         public ITeacherService TeacherService { get; }
         #endregion
+
 
 
         public IActionResult Index() => View();
@@ -54,10 +54,12 @@ namespace ExamPortal.Controllers
             return RedirectToAction(nameof(MyPapers));
         }
         [HttpGet]
-        public IActionResult MyPapers()
+        public IActionResult MyPapers(int? pages)
         {
-            var data = TeacherService.getMCQPapersByEmailId(User.Identity.Name);
-            return View(data);
+            var data = TeacherService.getAllPapersByEmailId(User.Identity.Name, pages ?? 1);
+            ViewBag.currentpage = pages ?? 1;
+            ViewBag.total = data.Item1;
+            return View(data.Item2);
         }
         [HttpGet]
         public IActionResult PaperDetails(string papercode)
@@ -85,28 +87,27 @@ namespace ExamPortal.Controllers
         {
             if (CodeGenerator.GetPaperType(papercode) == EPaperType.MCQ)
             {
-                var answersheet = TeacherService.GetAnswerSheetsBycode(papercode).ToList();
-                answersheet.Add(new MCQAnswerSheetDTO());
+                var answersheet = TeacherService.GetAnswerSheetsBycode(papercode);
                 return View(answersheet);
             }
             else
             {
-                var answersheet = TeacherService.GetDescriptiveAnswerSheetsBycode(papercode).ToList();
-                answersheet.Add(new DescriptiveAnswerSheetDTO());
-                return View("ResponsesOfDescriptive",answersheet);
+                var answersheet = TeacherService.GetDescriptiveAnswerSheetsBycode(papercode);
+                return View("ResponsesOfDescriptive", answersheet);
             }
         }
-        [HttpGet]
-        public IActionResult EnterMarks(string obj)
+        [HttpPost]
+        public IActionResult GetEnterMarks(string AnswerSheet, string Paper)
         {
-            var answersheet = JsonConvert.DeserializeObject<DescriptiveAnswerSheetDTO>(obj);
-            return View(answersheet);
+            var answersheet = JsonConvert.DeserializeObject<DescriptiveAnswerSheetDTO>(AnswerSheet);
+            answersheet.Paper = JsonConvert.DeserializeObject<DescriptivePaperDTO>(Paper);
+            return View("EnterMarks", answersheet);
         }
         [HttpPost]
-        public IActionResult EnterMarks(string papercode, int marksgiven, string studentname)
+        public IActionResult PostEnterMarks(string papercode, int marksgiven, string studentname)
         {
             TeacherService.SetMarksInDescriptivePaper(papercode, marksgiven, studentname);
-            return RedirectToAction("Responses",new { papercode = papercode });
+            return RedirectToAction("Responses", new { papercode = papercode });
         }
     }
 }

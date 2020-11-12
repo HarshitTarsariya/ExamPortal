@@ -3,6 +3,7 @@ using ExamPortal.DTOS;
 using ExamPortal.Models;
 using ExamPortal.Repositories;
 using ExamPortal.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,9 +29,10 @@ namespace ExamPortal.Services
         /// can delete any paper associated with given code
         /// </summary>
         public Task deletePaper(string papercode);
-        public IEnumerable<MCQAnswerSheetDTO> GetAnswerSheetsBycode(string papercode);
-        public IEnumerable<DescriptiveAnswerSheetDTO> GetDescriptiveAnswerSheetsBycode(string papercode);
+        public (MCQPaperDTO, List<MCQAnswerSheetDTO>) GetAnswerSheetsBycode(string papercode);
+        public (DescriptivePaperDTO, List<DescriptiveAnswerSheetDTO>) GetDescriptiveAnswerSheetsBycode(string papercode);
         public void SetMarksInDescriptivePaper(string papercode, int marksgiven, string studentname);
+        public Tuple<int, IEnumerable<PaperDTO>> getAllPapersByEmailId(string emailId, int page);
     }
 
     public class TeacherServiceImpl : ITeacherService
@@ -38,7 +40,7 @@ namespace ExamPortal.Services
         #region Constructor and Properties
 
         public TeacherServiceImpl(IMapper mapper, IMCQPaperRepo paperRepo
-            , IMCQAnswerSheetRepo answerSheetRepo, IFirebaseUpload fire, IDescriptivePaperRepo descriptivePaperRepo,IEmailService emailService,IDescriptiveAnswerSheetRepo descriptiveAnswerSheetRepo)
+            , IMCQAnswerSheetRepo answerSheetRepo, IFirebaseUpload fire, IDescriptivePaperRepo descriptivePaperRepo, IEmailService emailService, IDescriptiveAnswerSheetRepo descriptiveAnswerSheetRepo)
         {
             Mapper = mapper;
             McqPaperRepo = paperRepo;
@@ -65,11 +67,11 @@ namespace ExamPortal.Services
             foreach (var que in paper.Questions)
                 mcqPaper.Questions.Add(que.DtoTOEntity());
             McqPaperRepo.Create(mcqPaper);
-            
-            string linktosend = $"https://localhost:44394/Teacher/PaperDetails/{code}";
+
+            string linktosend = $"https://localhost:44394/Teacher/PaperDetails?papercode={code}";
             EmailService.SendMailForPaper(code, linktosend, paper.PaperTitle, paper.CreatedDate.ToString(), paper.DeadLine.ToString(), paper.TeacherEmailId);
             //sends mail regarding paper update
-            
+
             return code;
         }
 
@@ -78,7 +80,10 @@ namespace ExamPortal.Services
             var paper = McqPaperRepo.GetByPaperCode(code);
             var paperdto = Mapper.Map<MCQPaper, MCQPaperDTO>(paper);
             foreach (var que in paper.Questions)
+            {
+                que.MCQOptions.Shuffle();
                 paperdto.Questions.Add(que.EntityToDto());
+            }
             return paperdto;
         }
 
@@ -93,14 +98,14 @@ namespace ExamPortal.Services
         {
             string code = CodeGenerator.GetSharableCode(EPaperType.Descriptive);
             DesPaper.PaperCode = code;
-            string linkwith = await Fire.Upload(DesPaper.paper.OpenReadStream(),null,code);
+            string linkwith = await Fire.Upload(DesPaper.paper.OpenReadStream(), null, code);
             DesPaper.PaperPdfUrl = linkwith.Replace("&", Fire.Ampersand);
 
             DescriptivePaper paper = Mapper.Map<DescriptivePaperDTO, DescriptivePaper>(DesPaper);
             DescriptivePaperRepo.Create(paper);
-            
+
             EmailService.SendMailForPaper(code, linkwith, paper.PaperTitle, paper.CreatedDate.ToString(), paper.DeadLine.ToString(), paper.TeacherEmailId); //sends mail regarding paper update
-            
+
             return code;
         }
 
@@ -120,40 +125,51 @@ namespace ExamPortal.Services
                     McqPaperRepo.Delete(papercode);
                     break;
                 case EPaperType.Descriptive:
-                    await Fire.DeleteEverything(papercode,DescriptiveAnswerSheetRepo.GetAllResponseByCode(papercode).Select(paper=>paper.StudentEmailId).ToList());
+                    await Fire.DeleteEverything(papercode, DescriptiveAnswerSheetRepo.GetAllResponseByCode(papercode).Select(paper => paper.StudentEmailId).ToList());
                     DescriptivePaperRepo.Delete(papercode);
                     break;
             }
         }
-        public IEnumerable<MCQAnswerSheetDTO> GetAnswerSheetsBycode(string papercode)
+        public (MCQPaperDTO, List<MCQAnswerSheetDTO>) GetAnswerSheetsBycode(string papercode)
         {
-            var answerSheet=AnswerSheetRepo.GetByPaperCode(papercode);
-            var ans=Mapper.Map<IEnumerable<MCQAnswerSheet>, List<MCQAnswerSheetDTO>>(answerSheet);
-            int i = 0;
-            foreach (var ele in answerSheet)
+            var answerSheet = AnswerSheetRepo.GetByPaperCode(papercode).ToList();
+            var paper = McqPaperRepo.GetByPaperCode(papercode);
+            System.Diagnostics.Debug.Print(paper.Questions.Count.ToString()+" Total Questions");
+            var paperdto = Mapper.Map<MCQPaper, MCQPaperDTO>(paper);
+            var ans = Mapper.Map<IEnumerable<MCQAnswerSheet>, List<MCQAnswerSheetDTO>>(answerSheet);
+            
+            foreach (var que in answerSheet[0].MCQPaper.Questions)
             {
-                foreach (var que in ele.MCQPaper.Questions)
-                {
-                    ans[i].TotalMarks += que.Marks;
-                }
-                i++;
+                paperdto.TotalMarks += que.Marks;
             }
-            return ans;
+            
+            return (paperdto, ans);
         }
-        public IEnumerable<DescriptiveAnswerSheetDTO> GetDescriptiveAnswerSheetsBycode(string papercode)
+        public (DescriptivePaperDTO, List<DescriptiveAnswerSheetDTO>) GetDescriptiveAnswerSheetsBycode(string papercode)
         {
+
             var answersheets = DescriptiveAnswerSheetRepo.GetAllResponseByCode(papercode).ToList();
-            var ans = Mapper.Map<IEnumerable<DescriptiveAnswerSheet>, List<DescriptiveAnswerSheetDTO>>(answersheets);
-            for(int i = 0; i < ans.Count; i++)
+            var paper = DescriptivePaperRepo.GetByPaperCode(papercode);
+
+            var ans = (
+               paper: Mapper.Map<DescriptivePaper, DescriptivePaperDTO>(paper),
+               answersheets: Mapper.Map<IEnumerable<DescriptiveAnswerSheet>, List<DescriptiveAnswerSheetDTO>>(answersheets)
+            );
+            for (int i = 0; i < ans.Item2.Count; i++)
             {
-                ans[i].Paper = Mapper.Map<DescriptivePaper, DescriptivePaperDTO>(answersheets[i].DescriptivePaper);
-                ans[i].AnswerLink=ans[i].AnswerLink.Replace("__AMP__", "&");
+                ans.answersheets[i].AnswerLink = ans.answersheets[i].AnswerLink.Replace("__AMP__", "&");
             }
             return ans;
         }
         public void SetMarksInDescriptivePaper(string papercode, int marksgiven, string studentname)
         {
-            DescriptiveAnswerSheetRepo.SetMarksInDescriptivePaper(papercode,marksgiven,studentname);
+            DescriptiveAnswerSheetRepo.SetMarksInDescriptivePaper(papercode, marksgiven, studentname);
+        }
+        public Tuple<int, IEnumerable<PaperDTO>> getAllPapersByEmailId(string emailId, int page)
+        {
+            var x = McqPaperRepo.getAllPapersByEmailId(emailId, page);
+            var paper = Mapper.Map<IEnumerable<Paper>, List<PaperDTO>>(x.Item2);
+            return new Tuple<int, IEnumerable<PaperDTO>>(x.Item1, paper);
         }
     }
 }

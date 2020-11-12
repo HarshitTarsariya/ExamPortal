@@ -5,6 +5,8 @@ using ExamPortal.Repositories;
 using ExamPortal.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ExamPortal.Utilities
@@ -69,11 +71,29 @@ namespace ExamPortal.Utilities
             foreach (var opt in question.MCQOptions)
             {
                 question1.Opetions.Add(opt.OptionText);
-                if (opt.Id == question.TrueAnswer.Id)
+                
+                if (opt.MCQOptionId == question.MCQOptionId)
+                {
                     question1.TrueAnswer = i;
+                }
+                    
                 i++;
             }
             return question1;
+        }
+
+        public static void Shuffle<T>(this IList<T> list)
+        {
+            Random rng = new Random();
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                var _ = list[k];
+                list[k] = list[n];
+                list[n] = _;
+            }
         }
     }
 }

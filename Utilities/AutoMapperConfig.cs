@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ExamPortal.DTOS;
 using ExamPortal.Models;
+using System;
 
 //Automapper automatically maps the models which reduces the code in controller
 namespace ExamPortal.Utilities
@@ -13,9 +14,13 @@ namespace ExamPortal.Utilities
             /*QuestionDTO <---> Question auto mapping*/
 
             CreateMap<PaperDTO, Paper>()
-                .ForMember(RDest => RDest.Id, LSrc => LSrc.Ignore());
+                .ForMember(RDest => RDest.PaperId, LSrc => LSrc.Ignore())
+                .ForMember(RDest => RDest.CreatedDate, LSrc => LSrc.MapFrom(src => Convert.ToDateTime(src.CreatedDate)))
+                .ForMember(RDest => RDest.DeadLine, LSrc => LSrc.MapFrom(src => Convert.ToDateTime(src.DeadLine)));
             CreateMap<Paper, PaperDTO>()
-                .ForMember(RDest => RDest.Type, LSrc => LSrc.Ignore());
+                .ForMember(RDest => RDest.Type, LSrc => LSrc.Ignore())
+                .ForMember(RDest => RDest.CreatedDate, LSrc => LSrc.MapFrom(src => src.CreatedDate.ToString()))
+                .ForMember(RDest => RDest.DeadLine, LSrc => LSrc.MapFrom(src => src.DeadLine.ToString()));
             CreateMap<MCQPaper, PaperDTO>()
                .ForMember(RDest => RDest.Type, LSrc => LSrc.MapFrom(src => EPaperType.MCQ));
             CreateMap<DescriptivePaper, PaperDTO>()
@@ -28,19 +33,22 @@ namespace ExamPortal.Utilities
                 .ForMember(RDest => RDest.Questions, LSrc => LSrc.Ignore());
             CreateMap<MCQPaper, MCQPaperDTO>()
                 .ForMember(RDest => RDest.Questions, LSrc => LSrc.Ignore())
-                .ForMember(RDest => RDest.Type, LSrc => LSrc.MapFrom(src => EPaperType.MCQ));
+                .ForMember(RDest => RDest.Type, LSrc => LSrc.MapFrom(src => EPaperType.MCQ))
+                .ForMember(RDest => RDest.TotalMarks, LSrc => LSrc.Ignore());
+
 
             CreateMap<QuestionDTO, Question>()
-                .ForMember(RDest => RDest.Id, LSrc => LSrc.Ignore());
+                .ForMember(RDest => RDest.QuestionId, LSrc => LSrc.Ignore());
             CreateMap<MCQQuestionDTO, MCQQuestion>()
                 .ForMember(RDest => RDest.MCQPaperId, LSrc => LSrc.Ignore())
                 .ForMember(RDest => RDest.MCQPaper, LSrc => LSrc.Ignore())
                 .ForMember(RDest => RDest.MCQOptionId, LSrc => LSrc.Ignore())
                 .ForMember(RDest => RDest.TrueAnswer, LSrc => LSrc.Ignore())
                 .ForMember(RDest => RDest.MCQOptions, LSrc => LSrc.Ignore());
+            CreateMap<MCQQuestion,MCQQuestionDTO>();
             CreateMap<string, MCQOption>()
                 .ForMember(RDest => RDest.OptionText, LSrc => LSrc.MapFrom(src => src))
-                .ForMember(RDest => RDest.Id, LSrc => LSrc.Ignore());
+                .ForMember(RDest => RDest.MCQOptionId, LSrc => LSrc.Ignore());
             CreateMap<MCQAnswerSheet, MCQAnswerSheetDTO>()
                 .ForMember(RDest => RDest.Paper, LSrc => LSrc.MapFrom(src => src.MCQPaper))
                 .ForMember(RDest => RDest.TotalMarks, LSrc => LSrc.Ignore());

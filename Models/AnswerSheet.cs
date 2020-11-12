@@ -7,7 +7,7 @@ namespace ExamPortal.Models
     [Table("AnswerSheet")]
     public class AnswerSheet
     {
-        public int Id { get; set; }
+        public int AnswerSheetId { get; set; }
         public string StudentEmailId { get; set; }
         public DateTime SubmittedTime { get; set; }
 

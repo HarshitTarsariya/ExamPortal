@@ -1,8 +1,6 @@
 ﻿@model IEnumerable<ExamPortal.DTOS.PaperDTO>
 
-@{
-    ViewData["Title"] = "MyPapers";
-}
+@{ ViewData["Title"] = "MyPapers"; }
 @section Styles{
     <style>
         .show {
@@ -11,6 +9,7 @@
     </style>
 }
 <h1>MyPapers</h1>
+<hr />
 <form asp-action="DeletePaper" id="DeletePaper" style="display:none">
     <input type="hidden" name="paperCode" id="paperCode" />
 </form>
@@ -64,7 +63,7 @@
                     <a asp-action="PaperDetails" class="badge badge-info" asp-route-papercode="@item.PaperCode">Details</a>
                     | <a asp-action="Responses" class="badge badge-primary" asp-route-papercode="@item.PaperCode">Response</a>
                     | <a href="#" data-toggle="modal" data-dest="#deletetxt_@idx" class="badge badge-danger deleteLink" data-target="#Confirm_@idx" data-backdrop="static" data-keyboard="false">Delete</a>
-                     
+
                     <div class="modal fade" id="Confirm_@idx" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
@@ -76,7 +75,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <p>
-                                        do you want to delete this paper ? after deleted it won't be retrived and all answers associated with it will be gone
+                                        Do you want to delete this paper ? after deleted it won't be retrived and all answers associated with it will be gone
                                     </p>
                                     <hr />
                                     <div class="form-group">
@@ -95,12 +94,37 @@
                 </td>
             </tr>
             idx++;
-        }
+         }
     </tbody>
 </table>
+@if (ViewBag.total > 1)
+{
+    <ul class="pagination" style="margin-left:400px">
+        @for (int i = 1; i <= ViewBag.total; i++)
+        {
+            @if (i == ViewBag.currentpage)
+            {
+            <li class="page-item active" style="cursor:pointer"><a class="page-link">@i</a></li> 
+            }
+            else
+            {
+                <li class="page-item" style="cursor:pointer"><a class="page-link paginationlist" data-value="@i">@i</a></li>
+            }
+        }
+    </ul>
+}
+<form asp-action="MyPapers" asp-controller="Teacher" id="paginationform" method="get">
+    <input type="hidden" name="pages" id="paginationhidden" />
+</form>
+
+
 @section Scripts{
     <script>
         $(document).ready(function () {
+            $('.paginationlist').on('click', (event) => {
+                $('#paginationhidden').val($(event.target).data("value"));
+                $('#paginationform').submit();
+            });
             $(".deleteLink").click(function () {
                 let txtbox = $($(this).data("dest"));
                 txtbox.val("");

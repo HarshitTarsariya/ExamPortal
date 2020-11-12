@@ -91,8 +91,7 @@
             $("#MakeDescriptivePaper").submit(function () {
                 let expdate = $("#DeadLine").val();
                 let expd = moment(expdate, "MM-DD-YYYY hh:mm A");
-                let finaldate = expd.format("DD-MM-YYYY HH:mm");
-                $("#DeadLine").val(finaldate);
+                $("#DeadLine").val(expd["_i"]);
             });
         });
     </script>

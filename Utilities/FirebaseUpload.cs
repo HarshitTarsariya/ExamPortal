@@ -1,6 +1,4 @@
-﻿using ExamPortal.DTOS;
-using ExamPortal.Models;
-using Firebase.Auth;
+﻿using Firebase.Auth;
 using Firebase.Storage;
 using System;
 using System.Collections.Generic;
@@ -16,7 +14,6 @@ namespace ExamPortal.Utilities
     {
         public string Ampersand => "__AMP__";
         Task<string> Upload(Stream stream, string name, string papercode);
-        Task Delete(string FileName);
         Task DeleteEverything(string papercode, List<string> paperssubmitted);
     }
     public class FirebaseUpload : IFirebaseUpload
@@ -29,14 +26,14 @@ namespace ExamPortal.Utilities
         private string FileTypeUploaded = ".pdf";
         public async Task DeleteEverything(string papercode, List<string> paperssubmitted)
         {
-            
-            foreach(var response in paperssubmitted)
+
+            foreach (var response in paperssubmitted)
             {
-                await Delete(papercode + "_" + response+FileTypeUploaded);
+                await Delete(papercode + "_" + response + FileTypeUploaded);
             }
-            await Delete(papercode+ FileTypeUploaded);
+            await Delete(papercode + FileTypeUploaded);
         }
-        public async Task Delete(string FileName)
+        private async Task Delete(string FileName)
         {
             var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
             var aa = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
@@ -52,14 +49,20 @@ namespace ExamPortal.Utilities
                 .Child("Papers")
                 .Child(FileName)
                 .DeleteAsync();
-            await task;
-
+            try
+            {
+                await task;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.Write(e);
+            }
         }
 
         public async Task<string> Upload(Stream stream, string name, string papercode)
         {
             //Stream stream = DesPaper.paper.OpenReadStream();
-            string FileName= papercode;
+            string FileName = papercode;
             if (name != null)
             {
                 FileName += "_" + name;
@@ -93,6 +96,6 @@ namespace ExamPortal.Utilities
                 return "";
             }
         }
-        
+
     }
 }

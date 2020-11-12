@@ -1,6 +1,7 @@
 ﻿using ExamPortal.Models;
 using ExamPortal.Utilities;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,29 +26,41 @@ namespace ExamPortal.Repositories
 
         public MCQAnswerSheet GetByPaperCodeAndStudentEmail(string PaperCode, string StudentEmailId)
         {
-            return AppDbContext.MCQAnswerSheets.Include(ans=>ans.MCQPaper)
+            return AppDbContext.MCQAnswerSheets.Include(ans => ans.MCQPaper)
                 .Where(ans => ans.MCQPaper.PaperCode.Equals(PaperCode) && ans.StudentEmailId.Equals(StudentEmailId))
                 .FirstOrDefault();
         }
 
         public IEnumerable<MCQAnswerSheet> GetByStudentEmail(string StudentEmailId)
         {
-            var answersheets = AppDbContext.MCQAnswerSheets.Include(ans=>ans.MCQPaper).Where(ans=>ans.StudentEmailId.Equals(StudentEmailId)).ToList();
-            foreach (var sheet in answersheets)
+            IEnumerable<MCQAnswerSheet> answersheets = new List<MCQAnswerSheet>();
+            using (var transaction = AppDbContext.Database.BeginTransaction())
             {
-                sheet.MCQPaper.Questions = AppDbContext.MCQQuestions.Where(que => que.MCQPaperId == sheet.MCQPaperId).ToList();
+                try
+                {
+                    answersheets = AppDbContext.MCQAnswerSheets
+                                       .Include(ans => ans.MCQPaper)
+                                       .Where(ans => ans.StudentEmailId == StudentEmailId)
+                                       .ToList();
+                    foreach (var sheet in answersheets)
+                    {
+                        sheet.MCQPaper.Questions = AppDbContext.MCQQuestions.Where(que => que.MCQPaperId == sheet.MCQPaperId).ToList();
+                    }
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                }
             }
+
             return answersheets;
         }
         public IEnumerable<MCQAnswerSheet> GetByPaperCode(string papercode)
         {
-            var Id = AppDbContext.MCQPapers.FirstOrDefault(paper => paper.PaperCode.Equals(papercode)).Id;
-            var answersheets = AppDbContext.MCQAnswerSheets.Include(ans => ans.MCQPaper).Where(ans => ans.MCQPaperId==Id).ToList();
-            foreach (var sheet in answersheets)
-            {
-                sheet.MCQPaper.Questions = AppDbContext.MCQQuestions.Where(que => que.MCQPaperId == sheet.MCQPaperId).ToList();
-            }
-            return answersheets;
+            return AppDbContext.MCQAnswerSheets.Where(
+                ans => ans.MCQPaperId == AppDbContext.MCQPapers.FirstOrDefault(paper => paper.PaperCode == papercode).PaperId
+            ).ToList();
         }
         public void SetMCQAnswerSheet(MCQAnswerSheet answerSheet)
         {

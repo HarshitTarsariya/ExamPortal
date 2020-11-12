@@ -6,7 +6,7 @@ namespace ExamPortal.Models
     [Table("Paper")]
     public class Paper
     {
-        public int Id { get; set; }
+        public int PaperId { get; set; }
         public string PaperCode { get; set; }
         public string TeacherEmailId { get; set; }
         public DateTime CreatedDate { get; set; }

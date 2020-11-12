@@ -1,6 +1,5 @@
 ﻿using ExamPortal.Models;
 using ExamPortal.Utilities;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -42,7 +41,7 @@ namespace ExamPortal.Repositories
         }
         public IEnumerable<DescriptiveAnswerSheet> GetAllResponseByCode(string papercode)
         {
-            return DbContext.DescriptiveAnswerSheets.Include(sheet=>sheet.DescriptivePaper).Where(paper => paper.DescriptivePaper.PaperCode.Equals(papercode));
+            return DbContext.DescriptiveAnswerSheets.Where(paper => paper.DescriptivePaper.PaperCode.Equals(papercode));
         }
         public void SetMarksInDescriptivePaper(string papercode, int marksgiven, string studentname)
         {
