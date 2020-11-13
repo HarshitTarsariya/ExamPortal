@@ -46,9 +46,7 @@
             var interval = setInterval(() => {
 
                 var selectedtime = new Date($("#time").val()).getTime();
-                //console.log("selected: ", selectedtime, "|", $('#time').val());
                 var currenttime = new Date().getTime();
-                //console.log(currenttime);
                 var timeleft = selectedtime - currenttime;
                 var day = Math.floor(timeleft / (1000 * 60 * 60 * 24));
                 if (day < 10) day = "0" + day;
@@ -65,7 +63,7 @@
                 if (timeleft <= 0) {
                     clearInterval(interval);
                     $('#timer').html("<b>Time is over, further selection will not be considered<b>");
-                    //$('#submit').css('display', 'none');
+                    $('#submit').css('display', 'none');
                 }
 
             }, 1000);

@@ -55,10 +55,7 @@
     <input type="hidden" asp-for="@Model.CreatedDate" />
     <input type="hidden" asp-for="@Model.PaperTitle" />
     <input type="hidden" asp-for="@Model.CreatedDate" />
-    <input type="hidden" value="@Model.DeadLine" id="time" />
     <input type="submit" class="btn btn-success shadow" value="Submit" />
-
-
 </form>
 
 @section Scripts{
@@ -66,10 +63,10 @@
         $(document).ready(function () {
             //var selectedtime1 = $("#time").val();
             //var currenttime1 = new Date().getTime();
-
+            var qq = 0;
             //console.log(selectedtime1);
             var interval = setInterval(() => {
-
+                
                 var selectedtime = new Date($("#time").val()).getTime();
                 //console.log("selected: ", selectedtime, "|", $('#time').val());
                 var currenttime = new Date().getTime();
@@ -91,8 +88,10 @@
                     clearInterval(interval);
                     $('#timer').html("<b>Time is over, further selection will not be considered<b>");
                     $('input[type=submit]').css('display', 'none');
+                    if(qq!=0)
                     $('input[type=submit]')[0].click();
                 }
+                qq++;
 
             }, 1000);
 
@@ -103,10 +102,10 @@
                     clearInterval(FullScreen);
                     $('#CardforHonesty').css('display', 'none');
                     $('#FullScreen').html('');
-                    time = 20;
+                    time = 40;
                 }
                 else {
-
+                    clearInterval(FullScreen);
                     $('#CardforHonesty').css('display', 'block');
                     FullScreen = setInterval(() => {
                         $('#FullScreen').html(time);

@@ -33,7 +33,7 @@
             {
                 <tr>
                     <td>@Model.answersheet[i].StudentEmailId</td>
-                    @if (Model.answersheet[i].MarksObtained == null)
+                    @if (Model.answersheet[i].MarksObtained == -1)
                     {
                         <td class="text text-danger"><b>Pending</b></td>
                     }

@@ -6,6 +6,5 @@ namespace ExamPortal.Models
     public class DescriptivePaper : Paper
     {
         public string Link { get; set; }
-        public int TotalMarks { get; set; }
     }
 }

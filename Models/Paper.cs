@@ -10,7 +10,9 @@ namespace ExamPortal.Models
         public string PaperCode { get; set; }
         public string TeacherEmailId { get; set; }
         public DateTime CreatedDate { get; set; }
+
         public DateTime DeadLine { get; set; }
         public string PaperTitle { get; set; }
+        public int TotalMarks { get; set; }
     }
 }

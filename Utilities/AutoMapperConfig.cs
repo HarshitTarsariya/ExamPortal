@@ -30,11 +30,11 @@ namespace ExamPortal.Utilities
             CreateMap<Paper, PaperDTO>()
                 .ForMember(RDest => RDest.Type, LSrc => LSrc.Ignore());
             CreateMap<MCQPaperDTO, MCQPaper>()
-                .ForMember(RDest => RDest.Questions, LSrc => LSrc.Ignore());
+                .ForMember(RDest => RDest.Questions, LSrc => LSrc.Ignore())
+                .ForMember(RDest => RDest.TotalMarks, LSrc => LSrc.Ignore());
             CreateMap<MCQPaper, MCQPaperDTO>()
                 .ForMember(RDest => RDest.Questions, LSrc => LSrc.Ignore())
-                .ForMember(RDest => RDest.Type, LSrc => LSrc.MapFrom(src => EPaperType.MCQ))
-                .ForMember(RDest => RDest.TotalMarks, LSrc => LSrc.Ignore());
+                .ForMember(RDest => RDest.Type, LSrc => LSrc.MapFrom(src => EPaperType.MCQ));
 
 
             CreateMap<QuestionDTO, Question>()
@@ -50,8 +50,7 @@ namespace ExamPortal.Utilities
                 .ForMember(RDest => RDest.OptionText, LSrc => LSrc.MapFrom(src => src))
                 .ForMember(RDest => RDest.MCQOptionId, LSrc => LSrc.Ignore());
             CreateMap<MCQAnswerSheet, MCQAnswerSheetDTO>()
-                .ForMember(RDest => RDest.Paper, LSrc => LSrc.MapFrom(src => src.MCQPaper))
-                .ForMember(RDest => RDest.TotalMarks, LSrc => LSrc.Ignore());
+                .ForMember(RDest => RDest.Paper, LSrc => LSrc.MapFrom(src => src.MCQPaper));
             CreateMap<DescriptiveAnswerSheet, DescriptiveAnswerSheetDTO>()
                 .ForMember(RDest => RDest.Paper, LSrc => LSrc.Ignore())
                 .ForMember(RDest => RDest.AnswerSheet, LSrc => LSrc.Ignore());
@@ -60,7 +59,8 @@ namespace ExamPortal.Utilities
             CreateMap<DescriptivePaper, DescriptivePaperDTO>()
               .ForMember(RDest => RDest.PaperPdfUrl, LSrc => LSrc.MapFrom(src => src.Link))
               .ForMember(RDest => RDest.paper, LSrc => LSrc.Ignore());
-
+            CreateMap<AnswerSheet, AnswerSheetDTO>()
+                .ForMember(RDest => RDest.paperdto, LSrc => LSrc.Ignore());
         }
 
     }

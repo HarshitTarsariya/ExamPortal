@@ -52,10 +52,10 @@ namespace ExamPortal.Controllers
                 if (ansSheet != null)
                     return AlreadySubmitted((ansSheet as MCQAnswerSheetDTO).Paper.TeacherEmailId);
                 var paperdto = StudentService.GetMcqPaper(papercode);
-                if (paperdto == null)
+                if (paperdto.paper == null)
                     return InvalidCode();
 
-                return View("Verify", paperdto);
+                return View("Verify", paperdto.paper);
             }
             else if (CodeGenerator.GetPaperType(papercode) == EPaperType.Descriptive)
             {
@@ -73,18 +73,19 @@ namespace ExamPortal.Controllers
         public IActionResult SubmitMCQPaper(string papercode)
         {
             var paperdto = StudentService.GetMcqPaper(papercode);
-            Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-            if(paperdto == null)
+            //Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            if(paperdto.paper == null)
             {
                 ViewBag.Data = "Invalid Code";
                 return View("PaperCode");
             }
-            return View(paperdto);
+            ViewBag.answers = paperdto.answers;
+            return View(paperdto.paper);
         }
         [HttpPost]
-        public IActionResult SubmitMCQPaper(MCQPaperDTO mCQPaperDTO)
+        public IActionResult SubmitMCQPaper(MCQPaperDTO paper)
         {
-            if (Convert.ToDateTime(mCQPaperDTO.DeadLine) >= new DateTime())
+            if (Convert.ToDateTime(paper.DeadLine) >= new DateTime())
             {
                 Func<int, int, string> GetMessage = (total, obtained) =>
                 {
@@ -102,14 +103,14 @@ namespace ExamPortal.Controllers
                         msg = "Requires Special Meeting with Faculty";
                     return msg;
                 };
-                KeyValuePair<int, int> marks = StudentService.SetMCQAnswerSheet(mCQPaperDTO, User.Identity.Name);
+                KeyValuePair<int, int> marks = StudentService.SetMCQAnswerSheet(paper, User.Identity.Name);
                 ViewBag.MarksObtained = marks.Value;
                 ViewBag.TotalMarks = marks.Key;
                 ViewBag.Message = GetMessage(marks.Key, marks.Value);
                 ViewBag.User = User.Identity.Name;
                 return View("MCQPaperResult");
             }
-            return View("SubmitMCQPaper", mCQPaperDTO);
+            return View("SubmitMCQPaper", paper);
         }
         [HttpGet]
         public IActionResult SubmitDescriptivePaper(string papercode)
@@ -130,9 +131,12 @@ namespace ExamPortal.Controllers
             return RedirectToAction(nameof(HomeController.Index));
         }
         [HttpGet]
-        public IActionResult GetResults()
+        public IActionResult GetResults(int? pages)
         {
-            return View(StudentService.GetMCQAnswerSheets(User.Identity.Name));
+            var x = StudentService.GetAllAnswerSheets(User.Identity.Name, pages ?? 1);
+            ViewBag.currentpage = pages ?? 1;
+            ViewBag.total = x.total;
+            return View(x.answersheet);
         }
 
     }

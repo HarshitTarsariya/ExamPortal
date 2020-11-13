@@ -18,6 +18,7 @@ namespace ExamPortal.DTOS
         public string DeadLine { get; set; }
         [Required]
         public string PaperTitle { get; set; }
+        public int TotalMarks { get; set; }
 
         public EPaperType Type { get; set; }
     }

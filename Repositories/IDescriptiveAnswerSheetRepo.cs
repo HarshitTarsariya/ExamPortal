@@ -1,5 +1,6 @@
 ﻿using ExamPortal.Models;
 using ExamPortal.Utilities;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -26,7 +27,7 @@ namespace ExamPortal.Repositories
         #endregion
         public DescriptiveAnswerSheet GetByPaperCodeAndStudentEmail(string PaperCode, string StudentEmailId)
         {
-            return DbContext.DescriptiveAnswerSheets
+            return DbContext.DescriptiveAnswerSheets.Include(sheet=>sheet.DescriptivePaper)
                 .FirstOrDefault(ele => ele.DescriptivePaper.PaperCode == PaperCode && ele.StudentEmailId == StudentEmailId);
         }
 

@@ -24,7 +24,6 @@
 
 
 <form asp-action="@nameof(StudentController.SubmitMCQPaper)">
-    <input type="hidden" value="@Model.DeadLine" id="time" />
     @for (var i = 0; i < Model.Questions.Count(); i++)
     {
         <div class="card my-1 shadow">
@@ -37,7 +36,7 @@
                 {
                     <div class="row">
                         <div class="col-md-2">
-                            <input type="radio" value="@j" asp-for="@Model.Questions[i].TrueAnswer" />
+                            <input type="radio" value="@ViewBag.answers[i][j]" asp-for="@Model.Questions[i].TrueAnswer" />
                         </div>
                         <div class="col-md-10">
                             <label>@Model.Questions[i].Opetions[j]</label>
@@ -49,7 +48,7 @@
             </div>
         </div>
      }
-    <input type="hidden" value="@Model.DeadLine" id="time" />
+    <input type="hidden"  value="@Model.DeadLine" id="time" />
     <input type="hidden" asp-for="@Model.PaperCode" />
     <input type="hidden" asp-for="@Model.TeacherEmailId" />
     <input type="hidden" asp-for="@Model.CreatedDate" />
@@ -57,22 +56,18 @@
     <input type="hidden" asp-for="@Model.CreatedDate" />
     <input type="submit" class="btn btn-success shadow" value="Submit" />
 
-
 </form>
 
 @section Scripts{
     <script>
+        
         $(document).ready(function () {
-            //var selectedtime1 = $("#time").val();
-            //var currenttime1 = new Date().getTime();
-
-            //console.log(selectedtime1);
+            var qq = 0;
             var interval = setInterval(() => {
-
                 var selectedtime = new Date($("#time").val()).getTime();
-                //console.log("selected: ", selectedtime, "|", $('#time').val());
+
+                console.log(selectedtime);
                 var currenttime = new Date().getTime();
-                //console.log(currenttime);
                 var timeleft = selectedtime - currenttime;
                 var day = Math.floor(timeleft / (1000 * 60 * 60 * 24));
                 if (day < 10) day = "0" + day;
@@ -90,7 +85,11 @@
                     clearInterval(interval);
                     $('#timer').html("<b>Time is over, further selection will not be considered<b>");
                     $('input[type=submit]').css('display', 'none');
+                    if (qq != 0) {
+                        $('input[type=submit]')[0].click();
+                    }
                 }
+                qq++;
 
             }, 1000);
 
@@ -104,7 +103,7 @@
                     time = 40;
                 }
                 else {
-
+                    clearInterval(FullScreen);
                     $('#CardforHonesty').css('display', 'block');
                     FullScreen = setInterval(() => {
                         $('#FullScreen').html(time);

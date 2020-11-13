@@ -26,6 +26,9 @@ namespace ExamPortal.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<int?>("MarksObtained")
+                        .HasColumnType("int");
+
                     b.Property<string>("StudentEmailId")
                         .HasColumnType("nvarchar(max)");
 
@@ -78,6 +81,9 @@ namespace ExamPortal.Migrations
 
                     b.Property<string>("TeacherEmailId")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalMarks")
+                        .HasColumnType("int");
 
                     b.HasKey("PaperId");
 
@@ -308,9 +314,6 @@ namespace ExamPortal.Migrations
                     b.Property<int>("DescriptivePaperId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("MarksObtained")
-                        .HasColumnType("int");
-
                     b.HasIndex("DescriptivePaperId");
 
                     b.ToTable("DescriptiveAnswerSheet");
@@ -321,9 +324,6 @@ namespace ExamPortal.Migrations
                     b.HasBaseType("ExamPortal.Models.AnswerSheet");
 
                     b.Property<int>("MCQPaperId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MarksObtained")
                         .HasColumnType("int");
 
                     b.HasIndex("MCQPaperId");
@@ -337,9 +337,6 @@ namespace ExamPortal.Migrations
 
                     b.Property<string>("Link")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TotalMarks")
-                        .HasColumnType("int");
 
                     b.ToTable("DescriptivePaper");
                 });
