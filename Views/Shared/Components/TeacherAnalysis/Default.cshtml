@@ -1,0 +1,68 @@
+﻿
+@model (List<string> title, List<int> count)
+@{
+    Random r = new Random();
+}
+
+    <div class="container" style="width:75%;height:75%">
+        <canvas id="teacheranalysis"></canvas>
+    </div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        let ctx = document.getElementById('teacheranalysis').getContext('2d');
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'pie',
+
+            // The data for our dataset
+            data: {
+                labels: [
+                    @foreach(var i in Model.title)
+                    {
+                        <text>'@i',</text>
+                    }
+                ],
+                datasets: [{
+                    backgroundColor: [
+                        @for(var i=0;i<Model.title.Count;i++)
+                        {
+                            <text>setop('rgb(@r.Next(255),@r.Next(255),@r.Next(255))'),</text>
+                        }
+                    ],
+                    data: [
+                        @foreach(var i in Model.count)
+                        {
+                            <text>@i,</text>
+                        }
+                    ],
+                    borderWidth: 1,
+                    borderColor: '#777',
+                    hoverBorderWidth: 3,
+                    hoverBorderColor: "#000"
+                }]
+            },
+
+            // Configuration options go here
+            options: {
+                title: {
+                    display: true,
+                    text: "Submissions Of Paper Created by You(At Max Last 10)",
+                    fontSize: 25
+                },
+                legend: {
+                    position: 'right'
+                }
+            }
+        });
+    });
+    function setop(color, opacity) {
+        var alpha = opacity === undefined ? 0.5 : 1 - opacity;
+        return Color(color).alpha(alpha).rgbString();
+    }
+</script>

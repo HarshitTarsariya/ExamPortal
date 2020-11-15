@@ -1,14 +1,15 @@
 ﻿@model MCQPaperDTO
-@{
-    ViewData["Title"] = "MakePaper";
-}
+@{ ViewData["Title"] = "MakePaper"; }
 @section Styles{
     @{ await Html.RenderPartialAsync("_PartialDateTimeCss");}
 }
+@await Component.InvokeAsync("CurrPath", new
+{
+    header = "Make Paper",
+    paths = new List<EPath>() { EPath.DashBoard, EPath.MakeMCQPaper }
+})
 
-<h1>Make Paper</h1>
-
-<form asp-action="MakePaper" id="MakePaper">
+<form asp-action="@nameof(TeacherController.MakePaper)" id="MakePaper">
     <div class="form-row">
         <div class="col-md-8 my-1">
             <div class="form-group">
@@ -51,7 +52,7 @@
     <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i>&nbsp; Submit</button>
 </form>
 <div class="my-3">
-    <a asp-action="MyPapers">Back To List</a>
+    <a asp-action="@nameof(TeacherController.Index)">Back To List</a>
 </div>
 @section Scripts{
     @{ await Html.RenderPartialAsync("_PartialDateTimeJs");}

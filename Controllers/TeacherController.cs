@@ -17,7 +17,13 @@ namespace ExamPortal.Controllers
 
 
 
-        public IActionResult Index() => View();
+        public IActionResult Index(int? pages) 
+        {
+            var data = TeacherService.getAllPapersByEmailId(User.Identity.Name, pages ?? 1);
+            ViewBag.currentpage = pages ?? 1;
+            ViewBag.total = data.Item1;
+            return View(data.Item2);
+        }
         [HttpGet]
         public IActionResult MakePaper() => View();
         [HttpPost]
@@ -28,7 +34,7 @@ namespace ExamPortal.Controllers
                 paper.TeacherEmailId = User.Identity.Name;
                 //return Json(paper);
                 TeacherService.CreateMCQPaper(paper);
-                return RedirectToAction(nameof(MyPapers), "teacher");
+                return RedirectToAction(nameof(Index), "teacher");
             }
             return View(paper);
         }
@@ -51,16 +57,16 @@ namespace ExamPortal.Controllers
         public async Task<IActionResult> DeletePaper(string paperCode)
         {
             await TeacherService.deletePaper(paperCode);
-            return RedirectToAction(nameof(MyPapers));
+            return RedirectToAction(nameof(Index));
         }
-        [HttpGet]
-        public IActionResult MyPapers(int? pages)
-        {
-            var data = TeacherService.getAllPapersByEmailId(User.Identity.Name, pages ?? 1);
-            ViewBag.currentpage = pages ?? 1;
-            ViewBag.total = data.Item1;
-            return View(data.Item2);
-        }
+        //[HttpGet]
+        //public IActionResult MyPapers(int? pages)
+        //{
+        //    var data = TeacherService.getAllPapersByEmailId(User.Identity.Name, pages ?? 1);
+        //    ViewBag.currentpage = pages ?? 1;
+        //    ViewBag.total = data.Item1;
+        //    return View(data.Item2);
+        //}
         [HttpGet]
         public IActionResult PaperDetails(string papercode)
         {

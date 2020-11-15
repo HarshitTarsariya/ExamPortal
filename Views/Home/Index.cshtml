@@ -1,16 +1,44 @@
-﻿@{
+﻿@inject SignInManager<IdentityUser> signInManager
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="jumbotron my-5">
-    <div class="text-center">
-        <h1 class="display-4">Welcome To Exam Portal</h1>
-    </div>
-    <nav class="navbar navbar-expand-lg">
-        <div class="navbar-nav mx-auto">
-            <a class="nav-item btn btn-info m-2" asp-controller="teacher" asp-action="MyPapers"><span><i class="fa fa-clipboard-list"></i></span>&nbsp; My Paper List</a>
-            <a class="nav-item btn btn-info m-2" asp-controller="student" asp-action="GetResults"><span><i class="fas fa-clipboard-list"></i></span>&nbsp; My Answer List</a>
+@await Component.InvokeAsync("CurrPath", new
+{
+    header = "Welcome To Exam Portal",
+    paths = new List<EPath>() { EPath.DashBoard }
+})
+
+
+<div class="row">
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-light m-2" asp-controller="teacher" asp-action="@nameof(TeacherController.Index)">
+            <img class="card-img" style="opacity:0.4;" src="~/template/asset/images/papers.jpg" alt="Card image">
+            <div class="card-img-overlay">
+                <div class="card-title h4"><a asp-action="@nameof(TeacherController.Index)" asp-controller="teacher" class="stretched-link">My Paper List</a></div>
+                <p class="card-text">List Of Papers that you have created</p>
+                <p class="card-text">Last updated 3 mins ago</p>
+            </div>
         </div>
-    </nav>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-light m-2 " asp-controller="student" asp-action="@nameof(StudentController.Index)">
+            <img class="card-img" style="opacity:0.4;" src="~/template/asset/images/answersheet.jpg" alt="Card image">
+            <div class="card-img-overlay">
+                <div class="card-title h4"><a asp-action="@nameof(StudentController.Index)" asp-controller="student" class="stretched-link">My AnswerSheet List</a></div>
+                <p class="card-text">List Of AnswerSheets that you have Uploaded</p>
+                <p class="card-text">Last updated 3 mins ago</p>
+            </div>
+        </div>
+    </div>
 </div>
 
+
+@if (signInManager.IsSignedIn(User))
+{
+    @await Component.InvokeAsync("TeacherAnalysis");
+    <br />
+    <br />
+    @await Component.InvokeAsync("StudentAnalysis");
+
+}

@@ -69,7 +69,7 @@ namespace ExamPortal.Services
                     add.Add(opt.MCQOptionId);
                 }
                 answerstobenoted.Add(add);
-                paperdto.Questions.Add(que.EntityToDto());
+                paperdto.Questions.Add(Mapper.Map<MCQQuestion, MCQQuestionDTO>(que));
             }
             paperdto.Questions.ForEach(que => que.TrueAnswer = -1);
 
@@ -81,7 +81,7 @@ namespace ExamPortal.Services
             var paper1 = PaperRepo.GetByPaperCode(mcqpaperdto.PaperCode);
             var paper = Mapper.Map<MCQPaper, MCQPaperDTO>(paper1);
             foreach (var que in paper1.Questions)
-                paper.Questions.Add(que.EntityToDto());
+                paper.Questions.Add(Mapper.Map<MCQQuestion, MCQQuestionDTO>(que));
             int  ObtainedMarks = 0;
             for (int i = 0; i < paper.Questions.Count; i++)
             {

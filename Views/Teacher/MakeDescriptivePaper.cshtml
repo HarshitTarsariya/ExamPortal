@@ -1,13 +1,14 @@
 ﻿
-
 @model DescriptivePaperDTO
-@{
-    ViewData["Title"] = "MakeDescriptivePaper";
-}
+@{ ViewData["Title"] = "MakeDescriptivePaper"; }
 @section Styles{
     @{ await Html.RenderPartialAsync("_PartialDateTimeCss");}
 }
-
+@await Component.InvokeAsync("CurrPath", new
+{
+    header = "Make Descriptive Paper",
+    paths = new List<EPath>() { EPath.DashBoard, EPath.MakeDiscriptivePaper }
+})
 <div class="jumbotron my-5">
     <h1 class="display-3 text-center">Descriptive Paper Upload</h1><br />
     <div class="row">
@@ -59,7 +60,7 @@
     </div>
 </div>
 <div class="my-3">
-    <a asp-action="MyPapers">Back To List</a>
+    <a asp-action="@nameof(TeacherController.Index)">Back To List</a>
 </div>
 @section Scripts{
     @{ await Html.RenderPartialAsync("_PartialDateTimeJs");}

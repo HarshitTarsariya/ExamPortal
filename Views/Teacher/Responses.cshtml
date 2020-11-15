@@ -3,11 +3,16 @@
     ViewData["Title"] = "Responses";
 }
 
-<h3>Responses</h3>
-<br />
+@await Component.InvokeAsync("CurrPath", new
+{
+    header = Model.Paper.PaperTitle,
+    paths = new List<EPath>() { EPath.DashBoard, EPath.PaperList, EPath.MCQPaperResponses }
+})
 
 @if (Model.answersheet != null && Model.answersheet.Count > 0)
 {
+    
+
     <h5>Paper Title : <small>@Model.Paper.PaperTitle</small></h5>
     <h5>Paper Code  : <small>@Model.Paper.PaperCode</small></h5>
 
@@ -44,5 +49,5 @@ else
     <h4>No Response</h4>
 }
 <div class="my-3">
-    <a asp-action="MyPapers">Go To List</a>
+    <a asp-action="@nameof(TeacherController.Index)">Go To List</a>
 </div>

@@ -66,7 +66,7 @@ namespace ExamPortal.Services
             mcqPaper.PaperCode = code;
             foreach (var que in paper.Questions)
             {
-                mcqPaper.Questions.Add(que.DtoTOEntity());
+                mcqPaper.Questions.Add(Mapper.Map<MCQQuestionDTO, MCQQuestion>(que));
                 mcqPaper.TotalMarks += que.Marks;
             }
             McqPaperRepo.Create(mcqPaper);
@@ -85,7 +85,7 @@ namespace ExamPortal.Services
             foreach (var que in paper.Questions)
             {
                 que.MCQOptions.Shuffle();
-                paperdto.Questions.Add(que.EntityToDto());
+                paperdto.Questions.Add(Mapper.Map<MCQQuestion, MCQQuestionDTO>(que));
             }
             return paperdto;
         }
@@ -135,12 +135,12 @@ namespace ExamPortal.Services
         }
         public (MCQPaperDTO, List<MCQAnswerSheetDTO>) GetAnswerSheetsBycode(string papercode)
         {
+            var paper = McqPaperRepo.GetByPaperCode(papercode);
+            var paperdto = Mapper.Map<MCQPaper, MCQPaperDTO>(paper);
             var answerSheet = AnswerSheetRepo.GetByPaperCode(papercode).ToList();
             if (answerSheet.Count == 0)
-                return (null,null);
-            var paper = McqPaperRepo.GetByPaperCode(papercode);
- 
-            var paperdto = Mapper.Map<MCQPaper, MCQPaperDTO>(paper);
+                return (paperdto,null);
+            
             var ans = Mapper.Map<IEnumerable<MCQAnswerSheet>, List<MCQAnswerSheetDTO>>(answerSheet);
             return (paperdto, ans);
         }
@@ -149,7 +149,10 @@ namespace ExamPortal.Services
 
             var answersheets = DescriptiveAnswerSheetRepo.GetAllResponseByCode(papercode).ToList();
             var paper = DescriptivePaperRepo.GetByPaperCode(papercode);
-
+            if (answersheets.Count == 0)
+            {
+                return (Mapper.Map<DescriptivePaper, DescriptivePaperDTO>(paper), null);
+            }
             var ans = (
                paper: Mapper.Map<DescriptivePaper, DescriptivePaperDTO>(paper),
                answersheets: Mapper.Map<IEnumerable<DescriptiveAnswerSheet>, List<DescriptiveAnswerSheetDTO>>(answersheets)

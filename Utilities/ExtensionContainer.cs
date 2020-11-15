@@ -44,43 +44,43 @@ namespace ExamPortal.Utilities
             }).AddEntityFrameworkStores<AppDbContext>();
         }
 
-        //DTO to Entity for MCQQuestionDto <-> MCQQuestion done manually to configure the options and its answer
-        public static MCQQuestion DtoTOEntity(this MCQQuestionDTO questionDTO)
-        {
-            MCQQuestion question = new MCQQuestion();
-            question.QuestionText = questionDTO.QuestionText;
-            question.Marks = questionDTO.Marks;
-            for (var i = 0; i < questionDTO.Opetions.Count(); i++)
-            {
-                var opetion = new MCQOption() { OptionText = questionDTO.Opetions[i] };
-                question.MCQOptions.Add(opetion);
-                if (i == questionDTO.TrueAnswer)
-                    question.TrueAnswer = opetion;
-            }
-            return question;
-        }
+        ////DTO to Entity for MCQQuestionDto <-> MCQQuestion done manually to configure the options and its answer
+        //public static MCQQuestion DtoTOEntity(this MCQQuestionDTO questionDTO)
+        //{
+        //    MCQQuestion question = new MCQQuestion();
+        //    question.QuestionText = questionDTO.QuestionText;
+        //    question.Marks = questionDTO.Marks;
+        //    for (var i = 0; i < questionDTO.Opetions.Count(); i++)
+        //    {
+        //        var opetion = new MCQOption() { OptionText = questionDTO.Opetions[i] };
+        //        question.MCQOptions.Add(opetion);
+        //        if (i == questionDTO.TrueAnswer)
+        //            question.TrueAnswer = opetion;
+        //    }
+        //    return question;
+        //}
 
-        public static MCQQuestionDTO EntityToDto(this MCQQuestion question)
-        {
-            MCQQuestionDTO question1 = new MCQQuestionDTO
-            {
-                QuestionText = question.QuestionText,
-                Marks = question.Marks
-            };
-            var i = 0;
-            foreach (var opt in question.MCQOptions)
-            {
-                question1.Opetions.Add(opt.OptionText);
+        //public static MCQQuestionDTO EntityToDto(this MCQQuestion question)
+        //{
+        //    MCQQuestionDTO question1 = new MCQQuestionDTO
+        //    {
+        //        QuestionText = question.QuestionText,
+        //        Marks = question.Marks
+        //    };
+        //    var i = 0;
+        //    foreach (var opt in question.MCQOptions)
+        //    {
+        //        question1.Opetions.Add(opt.OptionText);
                 
-                if (opt.MCQOptionId == question.MCQOptionId)
-                {
-                    question1.TrueAnswer = i;
-                }
+        //        if (opt.MCQOptionId == question.MCQOptionId)
+        //        {
+        //            question1.TrueAnswer = i;
+        //        }
                     
-                i++;
-            }
-            return question1;
-        }
+        //        i++;
+        //    }
+        //    return question1;
+        //}
 
         public static void Shuffle<T>(this IList<T> list)
         {

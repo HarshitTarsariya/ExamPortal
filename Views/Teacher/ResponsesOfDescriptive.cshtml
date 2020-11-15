@@ -2,9 +2,11 @@
 @{
     ViewData["Title"] = "ResponsesOfDescriptive";
 }
-
-<h3>Responses</h3>
-<br />
+@await Component.InvokeAsync("CurrPath", new
+{
+    header = Model.paper.PaperTitle,
+    paths = new List<EPath>() { EPath.DashBoard, EPath.PaperList, EPath.DescriptivePaperResponses }
+})
 <form asp-action="@nameof(TeacherController.GetEnterMarks)" style="display:none" id="myForm">
     <input type="hidden" name="Paper" value="@JsonConvert.SerializeObject(Model.paper)" />
 </form>
@@ -59,5 +61,5 @@ else
 
 
 <div class="my-3">
-    <a asp-action="MyPapers">Go To List</a>
+    <a asp-action="@nameof(TeacherController.Index)">Go To List</a>
 </div>

@@ -1,8 +1,12 @@
 ﻿@{
     ViewData["Title"] = "PaperCode";
 }
-<h1>Paper Code</h1>
-<hr />
+
+@await Component.InvokeAsync("CurrPath", new
+{
+    header = "Write Answer",
+    paths = new List<EPath>() { EPath.DashBoard, EPath.PaperCode }
+})
 <div class="jumbotron my-5">
     <div class="text-center justify-content-center">
         <h1 class="display-3">Paper Code</h1><br />

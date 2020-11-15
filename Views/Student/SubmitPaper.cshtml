@@ -31,7 +31,7 @@
                     </div>
                     <div class="form-group">
                         <span class="badge badge-success">@ViewBag.Message</span><br />
-                        <a class="btn btn-info m-2" asp-action="Index" asp-controller="Home">Home</a>
+                        <a class="btn btn-info m-2" asp-action="@nameof(HomeController.Index)" asp-controller="Home">Home</a>
                     </div>
                 </div>
             </div>

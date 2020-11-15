@@ -1,0 +1,23 @@
+﻿@model (string header, List<PathItem> items)
+
+
+@{
+    ViewData["Title"] = "Default";
+}
+
+<h1 class="mt-4">@Model.header</h1>
+<ol class="breadcrumb mb-4">
+    @for (int i = 0; i < Model.items.Count; i++)
+    {
+        if (i == Model.items.Count - 1)
+        {
+            <li class="breadcrumb-item active">@Model.items[i].Display</li>
+        }
+        else
+        {
+            <li class="breadcrumb-item">
+                <a asp-action="@Model.items[i].Action" asp-controller="@Model.items[i].Controller">@Model.items[i].Display</a>
+            </li>
+        }
+    }
+</ol>

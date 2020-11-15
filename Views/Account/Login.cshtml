@@ -2,27 +2,30 @@
 @{
     ViewData["Title"] = "Login";
 }
+@await Component.InvokeAsync("CurrPath", new
+{
+    header = "Login",
+    paths = new List<EPath>() { EPath.DashBoard, EPath.Login }
+})
 
-<div class="container">
-    <h1>Login</h1>
-    <hr />
-    @if (Model.ExternalLogins.Count == 0)
-    {
-        <h2>No External Logins Provided</h2>
-    }
-    else
-    {
-        <form method="post" asp-controller="account" asp-action="ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl">
-            <div>
-                @foreach (var provider in Model.ExternalLogins)
-                {
-                    <button type="submit" class="btn btn-danger btn-lg" value="@provider.Name"
-                            name="provider">
-                        <span><i class="fab fa-google"></i></span>&nbsp;
-                        Login with @provider.DisplayName
-                    </button>
-                }
-            </div>
-        </form>
-    }
-</div>
+<hr />
+@if (Model.ExternalLogins.Count == 0)
+{
+    <h2>No External Logins Provided</h2>
+}
+else
+{
+    <form method="post" asp-controller="account" asp-action="ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl">
+        <div>
+            @foreach (var provider in Model.ExternalLogins)
+            {
+                <button type="submit" class="btn btn-danger btn-lg" value="@provider.Name"
+                        name="provider">
+                    <span><i class="fab fa-google"></i></span>&nbsp;
+                    Login with @provider.DisplayName
+                </button>
+            }
+        </div>
+    </form>
+}
+

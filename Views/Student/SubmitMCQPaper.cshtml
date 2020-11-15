@@ -66,7 +66,7 @@
             var interval = setInterval(() => {
                 var selectedtime = new Date($("#time").val()).getTime();
 
-                console.log(selectedtime);
+                
                 var currenttime = new Date().getTime();
                 var timeleft = selectedtime - currenttime;
                 var day = Math.floor(timeleft / (1000 * 60 * 60 * 24));
@@ -89,10 +89,32 @@
                         $('input[type=submit]')[0].click();
                     }
                 }
-                qq++;
+                else {
+                    if (qq == 0) {
+                        resizer();
+                    }
+                    qq++;
+                }
 
             }, 1000);
 
+            
+            
+            $(document).on({
+                'contextmenu': e => e.preventDefault(),
+                'keydown': e => {
+                    e = e || window.event;
+
+                    if (e.which != 122 && e.keyCode != 122) {
+                        e.preventDefault();
+                    }
+                },
+                'dblclick': (e) => {
+                    e.preventDefault();
+                }
+            });
+        });
+        function resizer() {
             var FullScreen, time = 40;
             $(window).resize(function () {
                 if (Math.abs(window.outerHeight - window.screen.height) <= 30 && Math.abs(window.outerWidth - window.screen.width) <= 20) {
@@ -115,20 +137,7 @@
                     window.scrollTo(0, 0);
                 }
             }).resize();
-            $(document).on({
-                'contextmenu': e => e.preventDefault(),
-                'keydown': e => {
-                    e = e || window.event;
-
-                    if (e.which != 122 && e.keyCode != 122) {
-                        e.preventDefault();
-                    }
-                },
-                'dblclick': (e) => {
-                    e.preventDefault();
-                }
-            });
-        });
+        }
     </script>
 }
 

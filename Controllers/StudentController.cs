@@ -22,10 +22,14 @@ namespace ExamPortal.Controllers
         }
         #endregion
 
-        public IActionResult Index()
+        public IActionResult Index(int? pages)
         {
-            return RedirectToAction(nameof(GetResults));
+            var x = StudentService.GetAllAnswerSheets(User.Identity.Name, pages ?? 1);
+            ViewBag.currentpage = pages ?? 1;
+            ViewBag.total = x.total;
+            return View(x.answersheet);
         }
+
         [HttpGet]
         public IActionResult PaperCode()
         {

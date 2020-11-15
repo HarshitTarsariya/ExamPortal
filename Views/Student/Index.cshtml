@@ -1,0 +1,84 @@
+﻿@model IEnumerable<ExamPortal.DTOS.AnswerSheetDTO>
+
+@{
+    ViewData["Title"] = "GetResults";
+}
+@await Component.InvokeAsync("CurrPath", new
+{
+    header = "Answers",
+    paths = new List<EPath>() { EPath.DashBoard, EPath.AnswerSheetList }
+})
+
+<p>
+    <a asp-action="PaperCode" class="btn btn-primary"> <span><i class="fas fa-plus"></i></span>&nbsp; Submit New Answer</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                SubmittedTime
+            </th>
+            <th>
+                PaperCode / PaperTitle
+            </th>
+            <th>
+                Marks / Total Marks
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.SubmittedTime
+                </td>
+                <td>
+                    @item.paperdto.PaperCode / @item.paperdto.PaperTitle
+                </td>
+                @if (item.MarksObtained == -1)
+                {
+                    <td>
+                        <span class="text-danger"><b>Pending</b></span>
+                    </td>
+                 }
+                else
+                {
+                    <td>
+                        @item.MarksObtained / @item.paperdto.TotalMarks
+                    </td>                
+                }
+
+            </tr>}
+    </tbody>
+</table>
+@if (ViewBag.total > 1)
+{
+    <ul class="pagination" style="margin-left:400px">
+        @for (int i = 1; i <= ViewBag.total; i++)
+        {
+            @if (i == ViewBag.currentpage)
+            {
+                <li class="page-item active" style="cursor:pointer"><a class="page-link">@i</a></li> 
+            }
+            else
+            {
+                <li class="page-item" style="cursor:pointer"><a class="page-link paginationlist" data-value="@i">@i</a></li>
+            }
+        }
+    </ul>
+ }
+<form asp-action="Index" asp-controller="Student" id="paginationform" method="get">
+    <input type="hidden" name="pages" id="paginationhidden" />
+</form>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('.paginationlist').on('click', (event) => {
+                $('#paginationhidden').val($(event.target).data("value"));
+                $('#paginationform').submit();
+            });
+        });
+    </script>
+}
