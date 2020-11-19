@@ -8,27 +8,37 @@
     header = "Welcome To Exam Portal",
     paths = new List<EPath>() { EPath.DashBoard }
 })
+@section Styles{
+    <style>
+        .d-flex .card {
+            width: 20rem;
+        }
 
+        @@media only screen and (max-width: 768px) {
+            .d-flex .card {
+                width: 25rem;
+                margin-right: auto !important;
+                margin-left: auto !important;
+            }
+        }
+    </style>
 
-<div class="row">
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-light m-2" asp-controller="teacher" asp-action="@nameof(TeacherController.Index)">
-            <img class="card-img" style="opacity:0.4;" src="~/template/asset/images/papers.jpg" alt="Card image">
-            <div class="card-img-overlay">
-                <div class="card-title h4"><a asp-action="@nameof(TeacherController.Index)" asp-controller="teacher" class="stretched-link">My Paper List</a></div>
-                <p class="card-text">List Of Papers that you have created</p>
-                <p class="card-text">Last updated 3 mins ago</p>
-            </div>
+}
+<div class="d-flex flex-wrap">
+    <div class="card bg-light m-2" asp-controller="teacher" asp-action="@nameof(TeacherController.Index)">
+        <img class="card-img" style="opacity:0.4;" src="~/template/asset/images/papers.jpg" alt="Card image">
+        <div class="card-img-overlay">
+            <div class="card-title h4"><a asp-action="@nameof(TeacherController.Index)" asp-controller="teacher" class="stretched-link">My Paper List</a></div>
+            <p class="card-text">List Of Papers that you have created</p>
+            <p class="card-text">Last updated 3 mins ago</p>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-light m-2 " asp-controller="student" asp-action="@nameof(StudentController.Index)">
-            <img class="card-img" style="opacity:0.4;" src="~/template/asset/images/answersheet.jpg" alt="Card image">
-            <div class="card-img-overlay">
-                <div class="card-title h4"><a asp-action="@nameof(StudentController.Index)" asp-controller="student" class="stretched-link">My AnswerSheet List</a></div>
-                <p class="card-text">List Of AnswerSheets that you have Uploaded</p>
-                <p class="card-text">Last updated 3 mins ago</p>
-            </div>
+    <div class="card bg-light m-2" asp-controller="student" asp-action="@nameof(StudentController.Index)">
+        <img class="card-img" style="opacity:0.4;" src="~/template/asset/images/answersheet.jpg" alt="Card image">
+        <div class="card-img-overlay">
+            <div class="card-title h4"><a asp-action="@nameof(StudentController.Index)" asp-controller="student" class="stretched-link">My AnswerSheet List</a></div>
+            <p class="card-text">List Of AnswerSheets that you have Uploaded</p>
+            <p class="card-text">Last updated 3 mins ago</p>
         </div>
     </div>
 </div>
@@ -36,9 +46,9 @@
 
 @if (signInManager.IsSignedIn(User))
 {
+    <hr />
     @await Component.InvokeAsync("TeacherAnalysis");
-    <br />
-    <br />
+    <hr />
     @await Component.InvokeAsync("StudentAnalysis");
 
 }

@@ -5,16 +5,19 @@
     ViewData["Title"] = "EnterMarks";
     var pdfURL = $@"{Model.AnswerLink}#toolbar=0&navpanes=0&scrollbar=0";
 }
+@await Component.InvokeAsync("CurrPath", new
+{
+    header = "Enter Marks",
+    paths = new List<EPath>() { EPath.DashBoard, EPath.PaperList, EPath.DescriptivePaperResponses, EPath.EnterMarks }
+})
 
 <h5>Paper Title : <small>@Model.Paper.PaperTitle</small></h5>
 <h5>Paper Code  : <small>@Model.Paper.PaperCode</small></h5>
 <h5>Total Marks : <small>@Model.Paper.TotalMarks</small></h5>
-<br />
-
+<hr />
 <h5>Student Name  : <small>@Model.StudentEmailId</small></h5>
 <h5>Submitted Time : <small>@Model.SubmittedTime</small></h5>
-<br />
-<br />
+<hr />
 <form asp-action="@nameof(TeacherController.PostEnterMarks)" method="post">
     <div class="form-group">
         <label>Marks Obtained</label>

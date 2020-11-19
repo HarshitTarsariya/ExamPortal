@@ -57,8 +57,16 @@ namespace ExamPortal.Repositories
 
         public void Delete(string papercode)
         {
+            var ls = AppDbContext.MCQAnswerSheets.Where(sheet => sheet.MCQPaper.PaperCode.Equals(papercode)).Select(sheet => sheet.AnswerSheetId).ToList();
+            
             AppDbContext.MCQPapers.Remove(AppDbContext.MCQPapers.Where(p => p.PaperCode.Equals(papercode)).FirstOrDefault());
             AppDbContext.SaveChanges();
+            foreach (var id in ls)
+            {
+                AppDbContext.AnswerSheets.Remove(AppDbContext.AnswerSheets.Where(sheet => sheet.AnswerSheetId == id).FirstOrDefault());
+                AppDbContext.SaveChanges();
+            }
+            
         }
 
         public MCQPaper GetByPaperCode(string paperCode)

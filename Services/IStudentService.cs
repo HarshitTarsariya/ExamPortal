@@ -19,7 +19,7 @@ namespace ExamPortal.Services
         public AnswerSheetDTO GetAnswerSheet(string paperCode, string studentEmailId);
         public DescriptiveAnswerSheetDTO GetDescriptiveAnswerSheetForExam(string papercode);
         public Task SetDescriptiveAnswerSheet(DescriptiveAnswerSheetDTO desanswersheetdto, string studentEmailId);
-        public (int total, IEnumerable<AnswerSheetDTO> answersheet) GetAllAnswerSheets(string studentemailid,int pages);
+        public (int total, IEnumerable<AnswerSheetDTO> answersheet) GetAllAnswerSheets(string studentemailid, int pages);
     }
 
     public class StudentServiceImpl : IStudentService
@@ -52,19 +52,19 @@ namespace ExamPortal.Services
             return null;
         }
 
-        public (List<List<int>> answers,MCQPaperDTO paper) GetMcqPaper(string code)
+        public (List<List<int>> answers, MCQPaperDTO paper) GetMcqPaper(string code)
         {
             MCQPaper paper = PaperRepo.GetByPaperCode(code);
             if (paper == null)
-                return (null,null);
+                return (null, null);
             List<List<int>> answerstobenoted = new List<List<int>>();
             MCQPaperDTO paperdto = new MCQPaperDTO();
-            paperdto=Mapper.Map(paper, paperdto);
+            paperdto = Mapper.Map(paper, paperdto);
             foreach (var que in paper.Questions)
             {
                 que.MCQOptions.Shuffle();
                 List<int> add = new List<int>();
-                foreach(var opt in que.MCQOptions)
+                foreach (var opt in que.MCQOptions)
                 {
                     add.Add(opt.MCQOptionId);
                 }
@@ -73,7 +73,7 @@ namespace ExamPortal.Services
             }
             paperdto.Questions.ForEach(que => que.TrueAnswer = -1);
 
-            return (answerstobenoted,paperdto);
+            return (answerstobenoted, paperdto);
         }
         public KeyValuePair<int, int> SetMCQAnswerSheet(MCQPaperDTO mcqpaperdto, string studentEmailId)
         {
@@ -82,10 +82,10 @@ namespace ExamPortal.Services
             var paper = Mapper.Map<MCQPaper, MCQPaperDTO>(paper1);
             foreach (var que in paper1.Questions)
                 paper.Questions.Add(Mapper.Map<MCQQuestion, MCQQuestionDTO>(que));
-            int  ObtainedMarks = 0;
+            int ObtainedMarks = 0;
             for (int i = 0; i < paper.Questions.Count; i++)
             {
-                if (mcqpaperdto.Questions[i].TrueAnswer==paper1.Questions[i].MCQOptionId)
+                if (mcqpaperdto.Questions[i].TrueAnswer == paper1.Questions[i].MCQOptionId)
                     ObtainedMarks += mcqpaperdto.Questions[i].Marks;
             }
 
@@ -145,12 +145,12 @@ namespace ExamPortal.Services
 
             DescriptiveAnswerSheetRepo.SetDescriptiveAnswerSheet(answersheet);
         }
-        public (int total, IEnumerable<AnswerSheetDTO> answersheet) GetAllAnswerSheets(string studentemailid,int pages)
+        public (int total, IEnumerable<AnswerSheetDTO> answersheet) GetAllAnswerSheets(string studentemailid, int pages)
         {
-            var pair=AnswerSheetRepo.GetAllAnswerSheets(studentemailid,pages);
+            var pair = AnswerSheetRepo.GetAllAnswerSheets(studentemailid, pages);
             var sheet = pair.answersheet.ToList();
             var dto = Mapper.Map<IEnumerable<AnswerSheet>, List<AnswerSheetDTO>>(sheet);
-            for(int i = 0; i < (sheet.Count()); i++)
+            for (int i = 0; i < (sheet.Count()); i++)
             {
                 var pp = AnswerSheetRepo.GetPaperByAnswerSheetId(sheet[i].AnswerSheetId);
                 dto[i].paperdto = Mapper.Map<Paper, PaperDTO>(pp);

@@ -9,7 +9,8 @@ namespace ExamPortal.ViewComponents
         DashBoard, PaperList, MakeDiscriptivePaper,
         MakeMCQPaper, Login, AnswerSheetList, PaperCode,
         MCQPaperDetail, DescriptivePaperDetail, MCQAnswerSheetDetail,
-        DescriptiveAnswerSheetDetail, MCQPaperResponses, DescriptivePaperResponses
+        DescriptiveAnswerSheetDetail, MCQPaperResponses, DescriptivePaperResponses,
+        EnterMarks
     }
     public class PathItem
     {
@@ -41,6 +42,8 @@ namespace ExamPortal.ViewComponents
             {EPath.DescriptiveAnswerSheetDetail,new PathItem("Descriptive AnswerSheet Detail","","") },
             {EPath.MCQPaperResponses,new PathItem("MCQ Paper Responses","","") },
             {EPath.DescriptivePaperResponses,new PathItem("Descriptive Paper Responses","","") },
+            {EPath.EnterMarks,new PathItem("Enter Marks","","") },
+
 
         };
         public IViewComponentResult Invoke(string header, List<EPath> paths)

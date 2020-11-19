@@ -9,7 +9,7 @@
 <ol class="breadcrumb mb-4">
     @for (int i = 0; i < Model.items.Count; i++)
     {
-        if (i == Model.items.Count - 1)
+        if (i == Model.items.Count - 1 || Model.items[i].Controller == "")
         {
             <li class="breadcrumb-item active">@Model.items[i].Display</li>
         }

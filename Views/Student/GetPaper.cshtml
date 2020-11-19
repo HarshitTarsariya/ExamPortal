@@ -1,0 +1,137 @@
+﻿@model MCQPaperDTO
+@{ ViewData["Title"] = "GetPaper"; }
+
+
+<div class="row">
+    <div class="col-md-8">
+        <h3>@Model.PaperTitle<sub><small>Prepared by @Model.TeacherEmailId</small></sub></h3><br />
+    </div>
+    <div class="col-md-4">
+        <div class="row justify-content-center border rounded-bottom shadow" id="timer">
+        </div>
+    </div>
+</div>
+<div class="dropdown-divider"></div>
+<br />
+<div class="card alert" id="CardforHonesty" style="display:none">
+    <div class="card-header text-danger">
+        <h4>Go to Full-Screen with in <b>(press F11 key)</b></h4> <span class="badge badge-danger" id="FullScreen"></span><b>,else paper will be submitted</b>
+    </div>
+    <div class="card-body text-success">
+        Honesty Seems Best Policy
+    </div>
+</div>
+
+
+<form asp-action="SubmitPaper">
+    <input type="hidden" value="@Model.DeadLine" id="time" />
+    @for (var i = 0; i < Model.Questions.Count(); i++)
+    {
+        <div class="card my-1 shadow">
+            <div class="card-header">@Model.Questions[i].QuestionText<span class="badge badge-secondary" style="float:right">@Model.Questions[i].Marks</span></div>
+
+            <input type="hidden" asp-for="@Model.Questions[i].QuestionText" />
+
+            <div class="card-body">
+                @for (var j = 0; j < Model.Questions[i].Opetions.Count(); j++)
+                {
+                    <div class="row">
+                        <div class="col-md-2">
+                            <input type="radio" value="@j" asp-for="@Model.Questions[i].TrueAnswer" />
+                        </div>
+                        <div class="col-md-10">
+                            <label>@Model.Questions[i].Opetions[j]</label>
+                            <input type="hidden" asp-for="@Model.Questions[i].Opetions[j]" />
+                            <input type="hidden" asp-for="@Model.Questions[i].Marks" /><br />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    <input type="hidden" value="@Model.DeadLine" id="time" />
+    <input type="hidden" asp-for="@Model.PaperCode" />
+    <input type="hidden" asp-for="@Model.TeacherEmailId" />
+    <input type="hidden" asp-for="@Model.CreatedDate" />
+    <input type="hidden" asp-for="@Model.PaperTitle" />
+    <input type="hidden" asp-for="@Model.CreatedDate" />
+    <input type="hidden" value="@Model.DeadLine" id="time" />
+    <input type="submit" class="btn btn-success shadow" value="Submit" />
+
+
+</form>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            //var selectedtime1 = $("#time").val();
+            //var currenttime1 = new Date().getTime();
+
+            //console.log(selectedtime1);
+            var interval = setInterval(() => {
+
+                var selectedtime = new Date($("#time").val()).getTime();
+                //console.log("selected: ", selectedtime, "|", $('#time').val());
+                var currenttime = new Date().getTime();
+                //console.log(currenttime);
+                var timeleft = selectedtime - currenttime;
+                var day = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+                if (day < 10) day = "0" + day;
+                var hour = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                if (hour < 10) hour = "0" + hour;
+                var minute = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+                if (minute < 10) minute = "0" + minute;
+                var second = Math.floor((timeleft % (1000 * 60)) / (1000));
+                if (second < 10) second = "0" + second;
+
+
+
+                $('#timer').html("<b>" + day + "d : " + hour + "h : " + minute + "m : " + second + "s </b>")
+                if (timeleft <= 0) {
+                    clearInterval(interval);
+                    $('#timer').html("<b>Time is over, further selection will not be considered<b>");
+                    $('input[type=submit]').css('display', 'none');
+                    $('input[type=submit]')[0].click();
+                }
+
+            }, 1000);
+
+            var FullScreen, time = 40;
+            $(window).resize(function () {
+                if (Math.abs(window.outerHeight - window.screen.height) <= 30 && Math.abs(window.outerWidth - window.screen.width) <= 20) {
+
+                    clearInterval(FullScreen);
+                    $('#CardforHonesty').css('display', 'none');
+                    $('#FullScreen').html('');
+                    time = 20;
+                }
+                else {
+
+                    $('#CardforHonesty').css('display', 'block');
+                    FullScreen = setInterval(() => {
+                        $('#FullScreen').html(time);
+                        time--;
+                        if (time <= 0) {
+                            $('input[type=submit]')[0].click();
+                        }
+                    }, 1000);
+                    window.scrollTo(0, 0);
+                }
+            }).resize();
+            $(document).on({
+                'contextmenu': e => e.preventDefault(),
+                'keydown': e => {
+                    e = e || window.event;
+
+                    if (e.which != 122 && e.keyCode != 122) {
+                        e.preventDefault();
+                    }
+                },
+                'dblclick': (e) => {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+}
+

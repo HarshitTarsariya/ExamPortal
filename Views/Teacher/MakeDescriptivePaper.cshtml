@@ -3,60 +3,69 @@
 @{ ViewData["Title"] = "MakeDescriptivePaper"; }
 @section Styles{
     @{ await Html.RenderPartialAsync("_PartialDateTimeCss");}
+    <style>
+        .uploadpaper {
+            width: 40rem;
+        }
+
+        @@media only screen and (max-width: 768px) {
+            .uploadpaper {
+                width: 32rem;
+            }
+        }
+    </style>
 }
 @await Component.InvokeAsync("CurrPath", new
 {
     header = "Make Descriptive Paper",
     paths = new List<EPath>() { EPath.DashBoard, EPath.MakeDiscriptivePaper }
 })
-<div class="jumbotron my-5">
-    <h1 class="display-3 text-center">Descriptive Paper Upload</h1><br />
-    <div class="row">
-        <div class="col-md-7 mx-auto">
-            <form asp-action="@nameof(TeacherController.MakeDescriptivePaper)" id="MakeDescriptivePaper" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <div class="input-group input-group-lg">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-lg">Title</span>
-                        </div>
-                        <input type="text" asp-for="PaperTitle" class="form-control" />
+<div class="card mx-auto uploadpaper">
+    <div class="card-header">Descriptive Paper Upload</div>
+    <div class="card-body">
+        <form asp-action="@nameof(TeacherController.MakeDescriptivePaper)" id="MakeDescriptivePaper" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <div class="input-group input-group-lg">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-lg">Title</span>
                     </div>
-                    <span asp-validation-for="PaperTitle" class="text-danger"></span>
+                    <input type="text" asp-for="PaperTitle" class="form-control" />
                 </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Total Marks</span>
-                        </div>
-                        <input asp-for="TotalMarks" class="form-control" />
+                <span asp-validation-for="PaperTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Total Marks</span>
                     </div>
-                    <span asp-validation-for="TotalMarks" class="text-danger"></span>
+                    <input asp-for="TotalMarks" class="form-control" />
                 </div>
-                <div class="form-group">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="fileUpload" accept="application/pdf" asp-for="paper" required />
-                        <label class="custom-file-label" id="fileUploadLbl" for="fileUpload">Upload File</label>
-                    </div>
-                    <span asp-validation-for="paper" class="text-danger"></span>
+                <span asp-validation-for="TotalMarks" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="fileUpload" accept="application/pdf" asp-for="paper" required />
+                    <label class="custom-file-label" id="fileUploadLbl" for="fileUpload">Upload File</label>
                 </div>
-                <div class="form-group">
-                    <label>Expire Date(MM/dd/YYYY)</label>
-                    <div class="input-group date" id="expireDate" data-target-input="nearest">
-                        <input type="text" placeholder="select expire date" asp-for="DeadLine" id="DeadLine" class="form-control datetimepicker-input" data-target="#expireDate" />
-                        <div class="input-group-append" data-target="#expireDate" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                        </div>
+                <span asp-validation-for="paper" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Expire Date(MM/dd/YYYY)</label>
+                <div class="input-group date" id="expireDate" data-target-input="nearest">
+                    <input type="text" placeholder="select expire date" asp-for="DeadLine" id="DeadLine" class="form-control datetimepicker-input" data-target="#expireDate" />
+                    <div class="input-group-append" data-target="#expireDate" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                     </div>
-                    <span class="text-danger" asp-validation-for="DeadLine"></span>
+                </div>
+                <span class="text-danger" asp-validation-for="DeadLine"></span>
 
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i>&nbsp; Submit</button>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i>&nbsp; Submit</button>
 
-                </div>
-            </form>
-            <span class="badge badge-danger">@ViewBag.Data</span>
-        </div>
+            </div>
+        </form>
+        <span class="badge badge-danger">@ViewBag.Data</span>
     </div>
 </div>
 <div class="my-3">

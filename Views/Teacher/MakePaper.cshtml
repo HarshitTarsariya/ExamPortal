@@ -2,6 +2,11 @@
 @{ ViewData["Title"] = "MakePaper"; }
 @section Styles{
     @{ await Html.RenderPartialAsync("_PartialDateTimeCss");}
+    <style>
+        .Question {
+            position: relative;
+        }
+    </style>
 }
 @await Component.InvokeAsync("CurrPath", new
 {
@@ -46,7 +51,7 @@
     </button>
 
 
-    <div class="my-5 questionContainer">
+    <div class="my-5 questionContainer" id="SortableContainer">
         <!--Question goes here-->
     </div>
     <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i>&nbsp; Submit</button>
@@ -210,7 +215,9 @@
             });
 
             $("#csvfile").change(function (event) {
-                $('.questionContainer').html();
+                var fname = $(this).val();
+                if (fname.substr(fname.lastIndexOf('.') + 1) != "csv")
+                    return;
                 var file = event.target.files[0];
                 let fr = new FileReader();
                 fr.readAsText(file);

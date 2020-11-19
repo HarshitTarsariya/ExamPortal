@@ -4,14 +4,15 @@
     var pdfURL = $@"{Model.PaperPdfUrl}#toolbar=0&navpanes=0&scrollbar=0";
 }
 
-<div class="container">
-    <h1>@Model.PaperTitle</h1>
-    <hr />
 
-    <object id="pdfFrame" width="100%" height="700px"></object>
-    <div class="my-3">
-        <a asp-action="@nameof(TeacherController.Index)">Back To List</a>
-    </div>
+@await Component.InvokeAsync("CurrPath", new
+{
+    header = "Descriptive Paper Details",
+    paths = new List<EPath>() { EPath.DashBoard, EPath.PaperList, EPath.DescriptivePaperDetail }
+})
+<object id="pdfFrame" width="100%" height="700px"></object>
+<div class="my-3">
+    <a asp-action="@nameof(TeacherController.Index)">Back To List</a>
 </div>
 
 @section Scripts{

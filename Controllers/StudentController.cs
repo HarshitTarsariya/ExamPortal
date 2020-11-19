@@ -1,4 +1,5 @@
-﻿using ExamPortal.DTOS;
+﻿
+using ExamPortal.DTOS;
 using ExamPortal.Services;
 using ExamPortal.Utilities;
 using Microsoft.AspNetCore.Mvc;
@@ -78,7 +79,7 @@ namespace ExamPortal.Controllers
         {
             var paperdto = StudentService.GetMcqPaper(papercode);
             //Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-            if(paperdto.paper == null)
+            if (paperdto.paper == null)
             {
                 ViewBag.Data = "Invalid Code";
                 return View("PaperCode");
@@ -133,14 +134,6 @@ namespace ExamPortal.Controllers
         {
             await StudentService.SetDescriptiveAnswerSheet(answerSheet1, User.Identity.Name);
             return RedirectToAction(nameof(HomeController.Index));
-        }
-        [HttpGet]
-        public IActionResult GetResults(int? pages)
-        {
-            var x = StudentService.GetAllAnswerSheets(User.Identity.Name, pages ?? 1);
-            ViewBag.currentpage = pages ?? 1;
-            ViewBag.total = x.total;
-            return View(x.answersheet);
         }
 
     }
